@@ -1,66 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sign In / Sign Up Form</title>
-  <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css">
+  <title>Formulario de Registro e Inicio de Sesión</title>
+  <link rel="stylesheet" href="https://cdn.lineicons.com/4.0/lineicons.css" />
   <link rel="stylesheet" href="/css/styles.css" />
 </head>
 <body>
 
   <div class="container" id="container">
-	<div class="form-container sign-up-container">
-		<form action="#">
-			<h1>Create Account</h1>
-      <br>
-			<div class="social-container">
-          <a href="#" class="social"><i class="lni lni-facebook fill"></i></a>
+    <div class="form-container sign-up-container">
+      <form id="signUpForm">
+        <h1>Crear Cuenta</h1>
+        <div class="social-container">
+          <a href="#" class="social"><i class="lni lni-facebook-fill"></i></a>
           <a href="#" class="social"><i class="lni lni-google"></i></a>
           <a href="#" class="social"><i class="lni lni-linkedin-original"></i></a>
         </div>
-        <br>
-			<span>or use your email for registration</span>
-			<input type="text" placeholder="Name" />
-			<input type="email" placeholder="Email" />
-			<input type="password" placeholder="Password" />
-			<button>Sign Up</button>
-		</form>
-	</div>
-	<div class="form-container sign-in-container">
-		<form action="#">
-			<h1>Sign in</h1>
-      <br>
-			<div class="social-container">
-          <a href="#" class="social"><i class="lni lni-facebook fill"></i></a>
-          <a href="#" class="social"><i class="lni lni-google"></i></a>
-          <a href="#" class="social"><i class="lni lni-linkedin-original"></i></a>
-        </div>
-        <br>
-			<span>or use your account</span>
-			<input type="email" placeholder="Email" />
-			<input type="password" placeholder="Password" />
-			<a href="#">Forgot your password?</a>
-			<button>Sign In</button>
-		</form>
-	</div>
-	<div class="overlay-container">
-		<div class="overlay">
-			<div class="overlay-panel overlay-left">
-				<h1>¡Qué bueno tenerte de vuelta!</h1>
-				<p>Accede a tu cuenta y continúa gestionando tus proyectos con las herramientas que necesitas.</p>
-				<button class="ghost" id="signIn">Sign In</button>
-			</div>
-			<div class="overlay-panel overlay-right">
-				<h1>¡Hola!</h1>
-				<p>Renta la maquinaria y herramientas que impulsan tus proyectos</p>
-				<button class="ghost" id="signUp">Sign Up</button>
-			</div>
-		</div>
-	</div>
-</div>
+        <span>o usa tu email para registrarte</span>
+        <input type="text" placeholder="Nombre" name="nombre" required />
+        <input type="email" placeholder="Email" name="email" required />
+        <input type="password" placeholder="Contraseña" name="contraseña" required />
+        <button type="submit">Registrarse</button>
+      </form>
+    </div>
 
-</footer>
-<script src="/js/script.js" ></script>
+    <div class="form-container sign-in-container">
+      <form id="signInForm">
+        <h1>Iniciar Sesión</h1>
+        <div class="social-container">
+          <a href="#" class="social"><i class="lni lni-facebook-fill"></i></a>
+          <a href="#" class="social"><i class="lni lni-google"></i></a>
+          <a href="#" class="social"><i class="lni lni-linkedin-original"></i></a>
+        </div>
+        <span>o usa tu cuenta</span>
+        <input type="email" placeholder="Email" name="email" required />
+        <input type="password" placeholder="Contraseña" name="contraseña" required />
+        <a href="#">¿Olvidaste tu contraseña?</a>
+        <button type="submit">Iniciar Sesión</button>
+      </form>
+    </div>
+
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-left">
+          <h1>¡Qué bueno tenerte de vuelta!</h1>
+          <p>Accede a tu cuenta y continúa gestionando tus proyectos con las herramientas que necesitas.</p>
+          <button class="ghost" id="signIn">Iniciar Sesión</button>
+        </div>
+        <div class="overlay-panel overlay-right">
+          <h1>¡Hola!</h1>
+          <p>Renta la maquinaria y herramientas que impulsan tus proyectos</p>
+          <button class="ghost" id="signUp">Registrarse</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/script.js"></script>
 </body>
 </html>

@@ -1,0 +1,256 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background: #fff7f0;
+  color: #333;
+  padding: 20px;
+}
+
+header h1 {
+  color: #e87722;
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: 700;
+  font-size: 2.5rem;
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.form-section,
+.tabla-section {
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgb(232 119 34 / 0.2);
+  margin-bottom: 40px;
+}
+
+h2 {
+  color: #e87722;
+  margin-bottom: 20px;
+  font-weight: 600;
+  border-bottom: 3px solid #e87722;
+  padding-bottom: 8px;
+}
+
+/* Formulario flexible */
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+form input,
+form select {
+  flex: 1 1 200px;
+  padding: 12px 15px;
+  border: 2px solid #e87722;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  min-width: 180px;
+}
+
+form input:focus,
+form select:focus {
+  border-color: #cf6200;
+  outline: none;
+}
+
+form button {
+  background-color: #e87722;
+  border: none;
+  padding: 12px 25px;
+  color: white;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  flex: 1 1 100px;
+  align-self: center;
+  min-width: 150px;
+}
+
+form button:hover {
+  background-color: #cf6200;
+}
+
+/* Tabla */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #e87722;
+  color: white;
+}
+
+th,
+td {
+  padding: 14px 10px;
+  border-bottom: 1px solid #f0b28a;
+  text-align: center;
+  font-weight: 500;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #fff3e6;
+}
+
+.actions-btn {
+  background-color: #cf6200;
+  border: none;
+  color: white;
+  padding: 7px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.actions-btn:hover {
+  background-color: #a74b00;
+}
+
+.volver-btn {
+  display: block;
+  margin: 0 auto 20px;
+  text-align: center;
+  color: #e87722;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
+}
+
+.volver-btn:hover {
+  color: #cf6200;
+}
+
+/* Toast */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.toast {
+  background-color: #e87722;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  margin-top: 10px;
+  box-shadow: 0 4px 10px rgb(232 119 34 / 0.4);
+  animation: fadeInOut 3s forwards;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  10%,
+  90% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+}
+
+/* RESPONSIVE */
+
+
+/* Tablets */
+@media (max-width: 1024px) {
+  form {
+    flex-direction: row;
+  }
+
+  form input,
+  form select,
+  form button {
+    flex: 1 1 45%;
+    min-width: 180px;
+  }
+}
+
+/* Móviles */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  form {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  form input,
+  form select,
+  form button {
+    width: 100%;
+    flex: 1 1 auto;
+    min-width: unset;
+  }
+
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+
+  thead {
+    display: none;
+  }
+
+  table tr {
+    background-color: #fff3e6;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+    padding: 10px;
+  }
+
+  table td {
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+    border: none;
+    border-bottom: 1px solid #f0b28a;
+  }
+
+  table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: bold;
+    text-align: left;
+    color: #cf6200;
+  }
+}

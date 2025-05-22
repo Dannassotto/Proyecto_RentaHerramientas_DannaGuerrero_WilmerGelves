@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+
+  <title>Administrar Usuarios</title>
+  <link rel="stylesheet" href="/css/user.css" />
+</head>
+<body>
+  <header>
+    <h1>Usuarios</h1>
+  </header>
+
+  <main>
+    <section class="form-section">
+      <h2>Registrar / Editar Usuario</h2>
+      <form id="usuarioForm">
+        <input type="hidden" id="editMode" value="false" />
+        <input type="text" id="nombre" placeholder="Nombre" required />
+        <input type="text" id="email" placeholder="Email" required />
+        <input type="password" id="contraseña" placeholder="Contraseña" required />
+        <select id="rol" required>
+          <option value="" disabled selected>Seleccione Rol</option>
+          <option value="1">ADMIN</option>
+          <option value="2">PROVEEDOR</option>
+          <option value="3">USER</option>
+        </select>
+        <button type="submit">Guardar</button>
+      </form>
+    </section>
+
+    <section class="tabla-section">
+      <h2>Lista de Usuarios</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="usuarioTableBody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <a href="/administrador/dashboard" class="volver-btn">← Volver al Dashboard</a>
+
+  <div id="notificaciones" class="toast-container"></div>
+
+  <script src="/js/admin-usuarios.js"></script>
+</body>
+</html>

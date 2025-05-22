@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <title>Devoluciones</title>
+  <link rel="stylesheet" href="/css/devoluciones.css" />
+</head>
+<body>
+  <header>
+    <h1>Gestión de Devoluciones</h1>
+  </header>
+
+  <main>
+    <section class="pendientes-section">
+      <h2>Herramientas por Devolver</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Herramienta</th>
+            <th>Fecha Fin</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaDevoluciones"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <a href="/administrador/dashboard" class="volver-btn">← Volver al Dashboard</a>
+
+  <div id="notificaciones" class="toast-container"></div>
+
+  <script src="/js/devoluciones.js"></script>
+</body>
+</html>

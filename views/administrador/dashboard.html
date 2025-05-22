@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard | Ferre-prestamo</title>
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
+  <link rel="stylesheet" href="/css/dashboard.css" />
+</head>
+<body>
+  <!-- Barra lateral -->
+  <div class="navbar">
+    <div class="logo-container">
+      <div class="logo-name">Ferre-prestamo</div>
+      <i class='bx bx-menu' id="btn-toggle"></i>
+    </div>
+  
+    <ul class="nav-container">
+      <li class="search">
+        <i class='bx bx-search'></i>
+        <input type="text" placeholder="Buscar" />
+        <span class="tooltip">Buscar</span>
+      </li>
+
+      <li>
+        <a href="#" class="active">
+          <i class='bx bxs-dashboard'></i>
+          <span class="links">Dashboard</span>
+        </a>
+        <span class="tooltip">Dashboard</span>
+      </li>
+
+      <li>
+        <a href="/administrador/user">
+          <i class='bx bx-user'></i>
+          <span class="links">Usuarios</span>
+        </a>
+        <span class="tooltip">Usuarios</span>
+      </li>
+
+      <li>
+        <a href="/administrador/pagos">
+          <i class='bx bx-wallet'></i>
+          <span class="links">Pagos y Facturación</span>
+        </a>
+        <span class="tooltip">Pagos y Facturación</span>
+      </li>
+
+      <li>
+        <a href="/administrador/alquileres">
+          <i class='bx bx-history'></i>
+          <span class="links">Historial de Alquileres</span>
+        </a>
+        <span class="tooltip">Historial de Alquileres</span>
+      </li>
+
+      <li>
+        <a href="/administrador/devoluciones">
+          <i class='bx bx-undo'></i>
+          <span class="links">Devoluciones</span>
+        </a>
+        <span class="tooltip">Devoluciones</span>
+      </li>
+
+      <li>
+        <a href="/administrador/incidencias">
+          <i class='bx bx-error-alt'></i>
+          <span class="links">Incidencias</span>
+        </a>
+        <span class="tooltip">Incidencias</span>
+      </li>
+
+      <li>
+        <a href="/administrador/reportes">
+          <i class='bx bx-bar-chart-alt-2'></i>
+          <span class="links">Reportes</span>
+        </a>
+        <span class="tooltip">Reportes</span>
+      </li>
+
+      <li>
+        <a href="/administrador/configuracion">
+          <i class='bx bx-cog'></i>
+          <span class="links">Configuración</span>
+        </a>
+        <span class="tooltip">Configuración</span>
+      </li>
+    </ul>
+
+    <div class="user">
+      <img src="/img/user.png" alt="User Image" />
+      <div class="user-details">
+        <span class="name">Admin</span>
+        <span class="job">Administrador</span>
+      </div>
+      <a href="/">
+        <i class='bx bx-log-out' id="logout"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Panel central -->
+  <div class="container">
+    <h1>Dashboard</h1>
+
+    <div class="dashboard-cards">
+      <div class="card">
+        <i class='bx bx-user'></i>
+        <h3>Usuarios</h3>
+        <p>45 registrados</p>
+      </div>
+      <div class="card">
+        <i class='bx bx-wrench'></i>
+        <h3>Herramientas</h3>
+        <p>120 disponibles</p>
+      </div>
+      <div class="card">
+        <i class='bx bx-calendar-check'></i>
+        <h3>Préstamos</h3>
+        <p>20 activos</p>
+      </div> 
+    </div>
+
+    <!-- Tabla de usuarios -->
+    <div class="user-table">
+      <h2>Lista de Usuarios</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Rol</th>
+          </tr>
+        </thead>
+        <tbody id="usuarioTableBody"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
