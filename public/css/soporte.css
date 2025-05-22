@@ -1,0 +1,82 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #d8bf91;
+  color: #0a0909;
+  min-height: 100vh;
+}
+
+.navbar {
+  background-color: #272525;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  color: #fff;
+}
+
+.main-content {
+  padding: 20px;
+  margin-left: 250px;
+}
+
+.ticket-form, .ticket-list {
+  background-color: #e0d5d5;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0 15px 0;
+  border-radius: 4px;
+  border: none;
+  font-size: 14px;
+}
+
+button {
+  background-color: #d87325;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #b05c1b;
+}
+
+.volver-btn {
+  display: block;
+  text-align: center;
+  color: #e87722;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 20px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+    padding: 15px 10px;
+  }
+
+  .navbar {
+    padding: 0 10px;
+  }
+
+  .ticket-form, .ticket-list {
+    padding: 15px 10px;
+    margin-bottom: 15px;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px 0;
+  }
+}

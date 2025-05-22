@@ -20,6 +20,25 @@ app.get('/', (req, res) => {
 app.get('/cliente/inicio', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'cliente', 'inicio.html'));
 });
+app.get('/cliente/herramientas', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'cliente', 'herramientas.html'));
+});
+
+app.get('/cliente/alquileres', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'cliente', 'alquileres.html'));
+});
+
+app.get('/cliente/pagos', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'cliente', 'pagos.html'));
+});
+
+app.get('/cliente/soporte', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'cliente', 'soporte.html'));
+});
+app.get('/cliente/perfil', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'cliente', 'perfil.html'));
+});
+
 
 // Rutas para administrador
 app.get('/administrador/dashboard', (req, res) => {
