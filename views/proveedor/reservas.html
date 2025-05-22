@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reservas</title>
+  <link rel="stylesheet" href="/css/reservas.css" />
+</head>
+<body>
+  <div class="main-content" id="reservas">
+    <h1>Gestión de Reservas</h1>
+    <p>Aquí puedes crear, visualizar y gestionar tus reservas de herramientas.</p>
+
+    <button class="btn-primary" id="btn-nueva-reserva">Nueva Reserva</button>
+
+    <table class="reservas-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Herramienta</th>
+          <th>Fecha Inicio</th>
+          <th>Fecha Fin</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="modal hidden" id="modal-reserva">
+    <div class="modal-content">
+      <button class="close-btn" id="close-modal" title="Cerrar">&times;</button>
+      <h2>Nueva Reserva</h2>
+      <form id="reserva-form">
+        <label for="cliente">Cliente:</label>
+        <input type="text" id="cliente" name="cliente" required />
+
+        <label for="herramienta">Herramienta:</label>
+        <input type="text" id="herramienta" name="herramienta" required />
+
+        <label for="fecha-inicio">Fecha Inicio:</label>
+        <input type="date" id="fecha-inicio" name="fecha-inicio" required />
+
+        <label for="fecha-fin">Fecha Fin:</label>
+        <input type="date" id="fecha-fin" name="fecha-fin" required />
+
+        <button type="submit" class="btn-primary">Crear Reserva</button>
+      </form>
+    </div>
+  </div>
+
+      <a href="/proveedor/inicio" class="volver-btn">← Volver al Dashboard</a>
+
+  <script src="/js/reservas.js"></script>
+</body>
+</html>

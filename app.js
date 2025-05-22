@@ -71,6 +71,23 @@ app.get('/proveedor/inicio', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'proveedor', 'inicio.html'));
 });
 
+app.get('/proveedor/herramientas', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'proveedor', 'herramientas.html'));
+});
+app.get('/proveedor/reservas', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'proveedor', 'reservas.html'));
+});
+
+app.get('/proveedor/facturacion', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'proveedor', 'facturacion.html'));
+});
+app.get('/proveedor/notificaciones', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'proveedor', 'notificaciones.html'));
+});
+
+
+
+
 // Simulación de login (pruebas)
 app.post('/api/login', (req, res) => {
   const { userName, password } = req.body;

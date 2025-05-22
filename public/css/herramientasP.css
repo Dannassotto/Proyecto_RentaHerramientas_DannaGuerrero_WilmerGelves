@@ -1,0 +1,407 @@
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #d8bf91;
+  color: #0a0909;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Contenedor principal  */
+.main-content {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 30px;
+  width: 100%;
+  max-width: 1100px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  overflow-x: auto;
+}
+
+/*  Botón de volver */
+.volver-btn {
+  display: block;
+  margin-top: 20px;
+  color: #e87722;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 10px 20px;
+  border: 2px solid #e87722;
+  border-radius: 6px;
+  cursor: pointer;
+  width: max-content;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.volver-btn:hover {
+  background-color: #e87722;
+  color: white;
+}
+
+/* Título y descripción  */
+#herramientas h1 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #d87325;
+  font-weight: 700;
+}
+
+#herramientas p {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+  color: #555;
+}
+
+/*  Botón principal  */
+.btn-primary {
+  background-color: #d87325;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #b05c1b;
+}
+
+/*  Tabla de herramientas  */
+.tools-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  overflow-x: auto;
+}
+
+.tools-table thead {
+  background-color: #f5f5f5;
+}
+
+.tools-table th, 
+.tools-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+}
+
+.tools-table th {
+  color: #333;
+  font-weight: 600;
+}
+
+
+.tool-img {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+/* Botones de acción (editar/eliminar) */
+.btn-edit, .btn-delete {
+  background-color: transparent;
+  border: 1.5px solid #d87325;
+  color: #d87325;
+  padding: 6px 12px;
+  margin-right: 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-edit:hover {
+  background-color: #d87325;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #b03000;
+  color: white;
+  border-color: #b03000;
+}
+
+/*  Modal  */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.hidden {
+  display: none;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  padding: 25px 30px;
+  position: relative;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* Botón cerrar modal */
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #666;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: #d87325;
+}
+
+/*  Formulario dentro del modal */
+#tool-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+}
+
+#tool-form input[type="text"],
+#tool-form textarea,
+#tool-form select,
+#tool-form input[type="file"] {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 15px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+#tool-form textarea {
+  min-height: 70px;
+}
+
+#tool-form button.btn-primary {
+  width: 100%;
+  font-size: 1.1rem;
+  padding: 10px 0;
+}
+
+/* Responsive */
+
+/* Teléfonos pequeños */
+@media (max-width: 480px) {
+  body {
+    padding: 12px 8px;
+  }
+
+  .main-content {
+    padding: 20px 15px;
+    border-radius: 6px;
+  }
+
+  
+  .tools-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch; 
+  }
+
+  .tools-table th,
+  .tools-table td {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+  }
+
+  .tool-img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .btn-edit,
+  .btn-delete {
+    padding: 5px 8px;
+    font-size: 0.8rem;
+    margin-right: 6px;
+  }
+
+  .btn-primary {
+    font-size: 1rem;
+    padding: 12px 0;
+    width: 100%;
+  }
+
+  .volver-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    margin-top: 15px;
+  }
+
+  #herramientas h1 {
+    font-size: 1.5rem;
+  }
+
+  #herramientas p {
+    font-size: 1rem;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 20px 18px;
+  }
+
+  /* Botón cerrar modal un poco más pequeño */
+  .close-btn {
+    font-size: 24px;
+    top: 12px;
+    right: 15px;
+  }
+}
+
+/* Tablets y móviles horizontales  */
+@media (min-width: 481px) and (max-width: 768px) {
+  body {
+    padding: 18px 12px;
+  }
+
+  .main-content {
+    padding: 25px 20px;
+    border-radius: 8px;
+  }
+
+  .tools-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tools-table th,
+  .tools-table td {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+
+  .tool-img {
+    width: 45px;
+    height: 45px;
+  }
+
+  .btn-edit,
+  .btn-delete {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+  }
+
+  .btn-primary {
+    width: 100%;
+    font-size: 1.05rem;
+    padding: 12px 0;
+  }
+
+  .volver-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    margin-top: 18px;
+  }
+
+  #herramientas h1 {
+    font-size: 1.75rem;
+  }
+
+  #herramientas p {
+    font-size: 1.05rem;
+  }
+
+  .modal-content {
+    width: 90%;
+    padding: 25px 22px;
+  }
+
+  .close-btn {
+    font-size: 26px;
+    top: 14px;
+    right: 18px;
+  }
+}
+
+/* Pantallas medianas */
+@media (min-width: 769px) and (max-width: 1024px) {
+  body {
+    padding: 20px 18px;
+  }
+
+  .main-content {
+    padding: 30px 25px;
+  }
+
+  .tools-table th,
+  .tools-table td {
+    font-size: 1rem;
+    padding: 12px 15px;
+  }
+
+  .tool-img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .btn-edit,
+  .btn-delete {
+    padding: 7px 12px;
+    font-size: 1rem;
+  }
+
+  .btn-primary {
+    width: auto;
+    font-size: 1.1rem;
+    padding: 12px 24px;
+  }
+
+  .volver-btn {
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    margin-top: 20px;
+  }
+
+  #herramientas h1 {
+    font-size: 2rem;
+  }
+
+  #herramientas p {
+    font-size: 1.1rem;
+  }
+
+  .modal-content {
+    width: 80%;
+    padding: 30px 28px;
+  }
+
+  .close-btn {
+    font-size: 28px;
+    top: 15px;
+    right: 20px;
+  }
+}

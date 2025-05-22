@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Facturación</title>
+  <link rel="stylesheet" href="/css/facturacion.css" />
+</head>
+<body>
+  <main class="main-content">
+    <section id="facturacion" class="tab-content">
+      <h1>Facturación</h1>
+      <p>Gestiona todas las facturas aquí.</p>
+
+      <button id="btn-abrir-factura" class="btn-primary">Crear Factura</button>
+
+      <table id="tabla-facturas" class="facturas-table">
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Monto</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        </tbody>
+      </table>
+
+
+      <div id="modal-factura" class="modal hidden">
+        <div class="modal-content">
+          <button id="cerrar-modal-factura" class="close-btn" title="Cerrar">&times;</button>
+          <h2>Formulario de Factura</h2>
+          <form id="form-factura">
+            <label for="numero-factura">Número</label>
+            <input type="text" id="numero-factura" name="numero-factura" required />
+
+            <label for="fecha-factura">Fecha</label>
+            <input type="date" id="fecha-factura" name="fecha-factura" required />
+
+            <label for="cliente-factura">Cliente</label>
+            <input type="text" id="cliente-factura" name="cliente-factura" required />
+
+            <label for="monto-factura">Monto</label>
+            <input
+              type="text"
+              id="monto-factura"
+              name="monto-factura"
+              pattern="^\d+(\.\d{1,2})?$"
+              title="Ingrese un monto válido"
+              required
+            />
+
+            <label for="estado-factura">Estado</label>
+            <select id="estado-factura" name="estado-factura" required>
+              <option value="Pendiente">Pendiente</option>
+              <option value="Pagada">Pagada</option>
+              <option value="Cancelada">Cancelada</option>
+            </select>
+
+            <button type="submit" class="btn-primary">Guardar</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+      <a href="/proveedor/inicio" class="volver-btn">← Volver al Dashboard</a>
+
+  <script src="/js/facturacion.js"></script>
+</body>
+</html>

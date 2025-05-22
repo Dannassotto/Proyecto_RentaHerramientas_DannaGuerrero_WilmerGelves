@@ -1,0 +1,320 @@
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #d8bf91;
+  color: #0a0909;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Contenedor principal */
+.main-content {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 30px;
+  width: 100%;
+  max-width: 1100px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  min-height: 600px;
+}
+
+/*  Título y descripción  */
+#notificaciones h1 {
+  color: #d87325;
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 2.2rem;
+  font-weight: bold;
+}
+
+#notificaciones p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-top: 0;
+  margin-bottom: 25px;
+}
+
+/*  Tabla */
+.notificaciones-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.notificaciones-table thead {
+  background-color: #f5f5f5;
+}
+
+.notificaciones-table th, .notificaciones-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+/* Celda que contiene los botones de acción */
+.notificaciones-table td.action-cell {
+  padding: 6px 8px;
+  white-space: normal; 
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 6px; 
+  align-items: center;
+}
+
+.notificaciones-table th {
+  color: #333;
+  font-weight: bold;
+}
+
+/*  Botones de acción dentro de tabla  */
+.action-btn {
+  background-color: transparent;
+  color: #d87325;
+  border: 1.5px solid #d87325;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  flex: 1 1 auto;
+  min-width: 80px;
+  max-width: 150px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.action-btn:hover {
+  background-color: #d87325;
+  color: #fff;
+}
+
+/*  Modal  */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.hidden {
+  display: none;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 30px 35px;
+  border-radius: 10px;
+  width: 450px;
+  max-width: 90%;
+  position: relative;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+/*  Botón cerrar modal  */
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #666;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: #d87325;
+}
+
+/*  Formulario modal */
+#form-notificacion label {
+  display: block;
+  font-weight: 600;
+  margin-top: 15px;
+  color: #333;
+}
+
+#form-notificacion input,
+#form-notificacion select {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 6px;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+#form-notificacion input:focus,
+#form-notificacion select:focus {
+  outline: none;
+  border-color: #d87325;
+}
+
+/* Botones principales debajo del contenedor*/
+.btn-primary, .volver-btn {
+  display: inline-block; 
+  max-width: 220px;
+  margin-top: 20px;
+  padding: 12px 18px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  font-weight: bold;
+  box-sizing: border-box;
+  user-select: none;
+  box-shadow: 0 2px 5px rgba(216, 115, 37, 0.4);
+}
+
+/* Estilos btn-primary */
+.btn-primary {
+  background-color: #d87325;
+  color: #fff;
+  border: none;
+  margin-left: 0; 
+}
+
+/* Hover y focus btn-primary */
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #b05c1b;
+  box-shadow: 0 4px 12px rgba(176, 92, 27, 0.6);
+  outline: none;
+}
+
+/* Estilos volver-btn */
+.volver-btn {
+  background-color: transparent;
+  color: #d87325;
+  border: 2px solid #d87325;
+  margin: 20px auto 0 auto; 
+  display: block; 
+  user-select: none;
+}
+
+/* Hover y focus volver-btn */
+.volver-btn:hover,
+.volver-btn:focus {
+  background-color: #d87325;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(216, 115, 37, 0.6);
+  outline: none;
+}
+
+/* Responsive para tablets  */
+@media (max-width: 1024px) {
+  .main-content {
+    padding: 20px;
+    max-width: 90%;
+    min-height: auto;
+  }
+
+  .notificaciones-table th,
+  .notificaciones-table td {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+
+  .action-btn {
+    min-width: 70px;
+    max-width: 120px;
+    font-size: 0.85rem;
+    padding: 5px 10px;
+  }
+
+  .modal-content {
+    width: 400px;
+  }
+}
+
+/*Responsive para teléfonos */
+@media (max-width: 767px) {
+  body {
+    padding: 10px;
+  }
+
+  .main-content {
+    padding: 15px;
+    max-width: 100%;
+    min-height: auto;
+    border-radius: 0;
+  }
+
+  /* Hacer que la tabla sea scrollable horizontalmente */
+  .notificaciones-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .notificaciones-table th,
+  .notificaciones-table td {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+  }
+
+  .notificaciones-table td.action-cell {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .action-btn {
+    min-width: 100%;
+    max-width: 100%;
+    font-size: 0.9rem;
+    padding: 8px 0;
+    margin-bottom: 6px;
+  }
+
+  .modal-content {
+    width: 95%;
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  #notificaciones h1 {
+    font-size: 1.8rem;
+  }
+
+  #notificaciones p {
+    font-size: 1rem;
+  }
+
+  .btn-primary, .volver-btn {
+    max-width: 100%;
+    padding: 14px 0;
+    margin-top: 15px;
+    display: block;
+  }
+
+  .btn-primary {
+    margin-left: 0;
+  }
+
+  .volver-btn {
+    margin-left: 0;
+  }
+}
