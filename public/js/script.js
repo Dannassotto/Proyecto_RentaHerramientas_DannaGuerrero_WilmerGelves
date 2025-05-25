@@ -1,131 +1,145 @@
-const API_BASE_URL = 'http://192.168.1.87:8080/api/usuario';
-
+const container = document.getElementById('container');
 const signUpButton = document.getElementById('signUp');
 const signInButton = document.getElementById('signIn');
-const container = document.getElementById('container');
 
-// Animación entre login y registro
+const signUpForm = document.getElementById('signUpForm');
+const signInForm = document.getElementById('signInForm');
+
 signUpButton.addEventListener('click', () => {
   container.classList.add("right-panel-active");
 });
+
 signInButton.addEventListener('click', () => {
   container.classList.remove("right-panel-active");
 });
 
-// Redirección según rol recibido del backend
-function loginUsuario(user) {
-  console.log("Usuario recibido:", user);
+async function login(username, password, redirectAfterLogin = true) {
+  try {
+    const response = await fetch('http://localhost:8080/auth/log-in', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
 
-  const roles = user.roles || [];
-  const rolNombre = roles.length > 0
-    ? (roles[0].nombre || roles[0].rol || roles[0])
-    : null;
+    if (!response.ok) {
+      let message = 'Credenciales inválidas';
+      try {
+        const errorData = await response.json();
+        if (errorData.message) message = errorData.message;
+      } catch (_) {}
+      alert('Error en login: ' + message);
+      return;
+    }
 
-  if (!rolNombre) {
-    alert("No se pudo obtener el rol del usuario.");
-    return;
-  }
+    const data = await response.json();
+    console.log('Datos recibidos en login:', data); 
 
-  localStorage.setItem('usuario', JSON.stringify(user));
-  localStorage.setItem('rol', rolNombre);
+    // Guardar token en localStorage
+    localStorage.setItem('token', data.jwt || data.token);
 
-  const rol = rolNombre.toUpperCase();
+    if (redirectAfterLogin) {
+      const roles = [];
 
-  if (rol === "ROLE_ADMINISTRADOR") {
-    window.location.href = '/administrador/dashboard';
-  } else if (rol === "ROLE_CLIENTE") {
-    window.location.href = '/cliente/inicio';
-  } else if (rol === "ROLE_PROVEEDOR") {
-    window.location.href = '/proveedor/inicio';
-  } else {
-    alert("Rol desconocido: " + rolNombre);
+      if (data.roles) {
+        if (Array.isArray(data.roles)) roles.push(...data.roles);
+        else if (typeof data.roles === 'string') roles.push(...data.roles.split(','));
+      }
+      if (data.authorities) {
+        if (Array.isArray(data.authorities)) roles.push(...data.authorities);
+        else if (typeof data.authorities === 'string') roles.push(...data.authorities.split(','));
+      }
+      if (data.roleListName) {
+        if (Array.isArray(data.roleListName)) roles.push(...data.roleListName);
+      }
+
+      const rolesUpper = roles.map(r => r.trim().toUpperCase());
+      console.log('Roles finales:', rolesUpper);
+
+      if (rolesUpper.includes('CLIENTE')) {
+        window.location.href = '/cliente/inicio';
+      } else if (rolesUpper.includes('PROVEEDOR')) {
+        window.location.href = '/proveedor/inicio';
+      } else if (rolesUpper.includes('ADMINISTRADOR') || rolesUpper.includes('ADMIN')) {
+        window.location.href = '/administrador/dashboard';
+      } else {
+        alert('Rol no reconocido');
+      }
+    }
+
+  } catch (error) {
+    alert('Error al conectar con el servidor');
+    console.error(error);
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  const signInForm = document.getElementById('signInForm');
-  const signUpForm = document.getElementById('signUpForm');
+async function signUp(nombre, email, contraseña) {
+  try {
+    const response = await fetch('http://localhost:8080/auth/sign-up', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombre,
+        username: email,
+        password: contraseña,
+        roleRequest: { roleListName: ["CLIENTE"] }
+      }),
+    });
 
-  // Login
-  signInForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    if (!response.ok) {
+      let message = 'No se pudo registrar';
+      try {
+        const contentType = response.headers.get('content-type');
+        const errorBody = contentType && contentType.includes('application/json')
+          ? await response.json()
+          : await response.text();
 
-    const email = signInForm.querySelector('input[name="email"]').value.trim();
-    const password = signInForm.querySelector('input[name="contraseña"]').value.trim();
-
-    if (!email || !password) {
-      alert("Por favor ingresa email y contraseña.");
+        if (typeof errorBody === 'string') {
+          message = errorBody;
+        } else if (errorBody.message) {
+          message = errorBody.message;
+        }
+      } catch (_) {}
+      alert('Error en registro: ' + message);
       return;
     }
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: email,
-          contraseña: password
-        })
-      });
+    alert('Registro exitoso. Redirigiendo...');
+    signUpForm.reset();
 
-      if (response.status === 401) {
-        alert("No autorizado: Verifica tus credenciales.");
-        return;
-      }
+    // Luego iniciar sesión y redirigir según rol
+    await login(email, contraseña, true);
 
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || "Error al iniciar sesión");
-      }
+  } catch (error) {
+    alert('Error al conectar con el servidor');
+    console.error(error);
+  }
+}
 
-      const data = await response.json();
-      loginUsuario(data);
-      signInForm.reset();
-    } catch (error) {
-      alert("Error: " + error.message);
-    }
-  });
+signInForm.addEventListener('submit', (event) => {
+  event.preventDefault();
 
-  // Registro
-  signUpForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  const email = signInForm.querySelector('input[name="email"]').value.trim();
+  const password = signInForm.querySelector('input[name="contraseña"]').value.trim();
 
-    const name = signUpForm.querySelector('input[name="nombre"]').value.trim();
-    const email = signUpForm.querySelector('input[name="email"]').value.trim();
-    const password = signUpForm.querySelector('input[name="contraseña"]').value.trim();
+  if (!email || !password) {
+    alert('Por favor completa todos los campos');
+    return;
+  }
 
-    if (!name || !email || !password) {
-      alert("Por favor completa todos los campos para registrarte.");
-      return;
-    }
+  login(email, password);
+});
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/save`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nombre: name,
-          username: email,
-          password: password,
-          roles: [{ id: 3 }] // Asignar rol CLIENTE por defecto
-        })
-      });
+signUpForm.addEventListener('submit', (event) => {
+  event.preventDefault();
 
-      if (response.status === 401) {
-        alert("No autorizado para registrar usuario.");
-        return;
-      }
+  const nombre = signUpForm.querySelector('input[name="nombre"]').value.trim();
+  const email = signUpForm.querySelector('input[name="email"]').value.trim();
+  const contraseña = signUpForm.querySelector('input[name="contraseña"]').value.trim();
 
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || "Error al registrar");
-      }
+  if (!nombre || !email || !contraseña) {
+    alert('Por favor completa todos los campos');
+    return;
+  }
 
-      alert("Registro exitoso. Ahora puedes iniciar sesión.");
-      signUpForm.reset();
-      container.classList.remove("right-panel-active");
-    } catch (error) {
-      alert("Error: " + error.message);
-    }
-  });
+  signUp(nombre, email, contraseña);
 });

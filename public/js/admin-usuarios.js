@@ -1,174 +1,202 @@
-const API_BASE = 'http://192.168.1.87:8080/api/usuario';
+document.addEventListener('DOMContentLoaded', () => {
+  cargarUsuarios();
 
-// Función para mostrar notificaciones simples
-function showNotification(message, isError = false) {
-  const container = document.getElementById('notificaciones');
-  container.textContent = message;
-  container.style.color = isError ? 'red' : 'green';
-  setTimeout(() => (container.textContent = ''), 3000);
-}
+  const form = document.getElementById('usuarioForm');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await guardarUsuario();
+  });
+});
 
-// LOGIN: enviar email y contraseña, guardar token
-async function login(email, contraseña) {
+async function cargarUsuarios() {
   try {
-    const res = await fetch(`${API_BASE}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, contraseña }),
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+      mostrarNotificacion('No estás autenticado. Por favor inicia sesión.', 'error');
+      return;
+    }
+
+    const response = await fetch('http://localhost:8080/api/usuario/findAll', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     });
 
-    if (!res.ok) throw new Error('Credenciales inválidas');
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
 
-    const data = await res.json();
-    // Aquí asumo que backend envía un token JWT en data.token (modifica backend si no)
-    localStorage.setItem('token', data.token);
-    showNotification('Login exitoso');
-    await loadUsuarios(); // carga usuarios tras login
-  } catch (error) {
-    showNotification(error.message, true);
-  }
-}
+    const usuarios = await response.json();
 
-// OBTENER usuarios
-async function loadUsuarios() {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    showNotification('Debes iniciar sesión', true);
-    return;
-  }
-  try {
-    const res = await fetch(`${API_BASE}/findAll`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!res.ok) throw new Error('No autorizado');
-
-    const usuarios = await res.json();
     const tbody = document.getElementById('usuarioTableBody');
     tbody.innerHTML = '';
-    usuarios.forEach((user) => {
-      tbody.innerHTML += `
-        <tr>
-          <td>${user.id}</td>
-          <td>${user.nombre}</td>
-          <td>${user.username}</td>
-          <td>${user.roles.map(r => r.name).join(', ')}</td>
-          <td>
-            <button onclick="editUsuario('${user.username}')">Editar</button>
-            <button onclick="deleteUsuario('${user.username}')">Eliminar</button>
-          </td>
-        </tr>
+
+    usuarios.forEach(usuario => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${usuario.id}</td>
+        <td>${usuario.nombre}</td>
+        <td>${usuario.username}</td>
+        <td>${usuario.roles.map(r => r.roleEnum).join(', ')}</td>
+        <td>
+          <button onclick="editarUsuario(${usuario.id})">Editar</button>
+          <button onclick="eliminarUsuario(${usuario.id})">Eliminar</button>
+        </td>
       `;
+      tbody.appendChild(tr);
     });
+
   } catch (error) {
-    showNotification(error.message, true);
+    mostrarNotificacion('Error al cargar usuarios: ' + error.message, 'error');
   }
 }
 
-// GUARDAR o ACTUALIZAR usuario
-async function saveUsuario(event) {
-  event.preventDefault();
-  const token = localStorage.getItem('token');
-  if (!token) {
-    showNotification('Debes iniciar sesión', true);
-    return;
-  }
-
-  const editMode = document.getElementById('editMode').value === 'true';
-  const nombre = document.getElementById('nombre').value;
-  const username = document.getElementById('email').value;
-  const contraseña = document.getElementById('contraseña').value;
-  const rolValue = document.getElementById('rol').value;
-
-  // Prepara el DTO para backend (modifica según tu DTO exacto)
-  const usuarioDTO = {
-    nombre: nombre,
-    username: username,
-    password: contraseña,
-    roles: [{ name: rolValue }], 
-  };
-
+async function guardarUsuario() {
   try {
-    const url = editMode
-      ? `${API_BASE}/update/${username}`
-      : `${API_BASE}/save`;
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+      mostrarNotificacion('No estás autenticado. Por favor inicia sesión.', 'error');
+      return;
+    }
 
+    const editMode = document.getElementById('editMode').value === 'true';
+    const id = editMode ? document.getElementById('usuarioForm').dataset.userId : null;
+    const nombre = document.getElementById('nombre').value.trim();
+    const username = document.getElementById('email').value.trim();
+    const password = document.getElementById('contraseña').value.trim();
+    const rolId = document.getElementById('rol').value;
+
+    if (!nombre || !username || !password || !rolId) {
+      mostrarNotificacion('Completa todos los campos', 'error');
+      return;
+    }
+
+    // Construir objeto para la API
+    const rolesMap = {
+      '1': 'ADMIN',
+      '2': 'PROVEEDOR',
+      '3': 'USER'
+    };
+    const rolNombre = rolesMap[rolId];
+
+    const usuarioData = {
+      nombre,
+      username,
+      password,
+      roleRequest: {
+        roleListName: [rolNombre]
+      }
+    };
+
+    const url = editMode ? `http://localhost:8080/api/usuario/${id}` : 'http://localhost:8080/api/usuario';
     const method = editMode ? 'PUT' : 'POST';
 
-    const res = await fetch(url, {
+    const response = await fetch(url, {
       method,
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify(usuarioDTO),
+      body: JSON.stringify(usuarioData)
     });
 
-    if (!res.ok) {
-      const errMsg = await res.text();
-      throw new Error(errMsg || 'Error al guardar usuario');
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Error: ${response.status} - ${errorText}`);
     }
 
-    showNotification(editMode ? 'Usuario actualizado' : 'Usuario creado');
-    document.getElementById('usuarioForm').reset();
-    document.getElementById('editMode').value = 'false';
-    await loadUsuarios();
+    mostrarNotificacion(editMode ? 'Usuario actualizado' : 'Usuario creado', 'success');
+    limpiarFormulario();
+    cargarUsuarios();
+
   } catch (error) {
-    showNotification(error.message, true);
+    mostrarNotificacion('Error al guardar usuario: ' + error.message, 'error');
   }
 }
 
-// EDITAR usuario: carga datos al form
-async function editUsuario(username) {
-  const token = localStorage.getItem('token');
-  if (!token) {
-    showNotification('Debes iniciar sesión', true);
-    return;
-  }
-  try {
-    const res = await fetch(`${API_BASE}/find/${username}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!res.ok) throw new Error('Usuario no encontrado');
+function editarUsuario(id) {
+  // Lógica para cargar usuario por id y poner datos en el formulario
+  // Puedes implementar una llamada GET para traer ese usuario
+  // Aquí un ejemplo sencillo:
 
-    const user = await res.json();
-
-    document.getElementById('nombre').value = user.nombre;
-    document.getElementById('email').value = user.username;
-    // No se carga contraseña por seguridad
-    document.getElementById('contraseña').value = '';
-    if(user.roles && user.roles.length > 0){
-      document.getElementById('rol').value = user.roles[0].name; // ajustar según cómo venga el rol
+  fetch(`http://localhost:8080/api/usuario/${id}`, {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
     }
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('No se pudo cargar el usuario');
+    return res.json();
+  })
+  .then(usuario => {
+    document.getElementById('nombre').value = usuario.nombre;
+    document.getElementById('email').value = usuario.username;
+    // No rellenamos contraseña por seguridad
+    // Seleccionar rol (asumiendo solo un rol)
+    if (usuario.roles && usuario.roles.length > 0) {
+      const rol = usuario.roles[0].roleEnum;
+      const rolSelect = document.getElementById('rol');
+      for (const option of rolSelect.options) {
+        if (option.text === rol) {
+          option.selected = true;
+          break;
+        }
+      }
+    }
+
     document.getElementById('editMode').value = 'true';
-  } catch (error) {
-    showNotification(error.message, true);
-  }
+    document.getElementById('usuarioForm').dataset.userId = id;
+  })
+  .catch(error => {
+    mostrarNotificacion(error.message, 'error');
+  });
 }
 
-// ELIMINAR usuario
-async function deleteUsuario(username) {
-  if (!confirm(`¿Seguro que quieres eliminar a ${username}?`)) return;
+async function eliminarUsuario(id) {
+  if (!confirm('¿Seguro que quieres eliminar este usuario?')) return;
 
-  const token = localStorage.getItem('token');
-  if (!token) {
-    showNotification('Debes iniciar sesión', true);
-    return;
-  }
   try {
-    const res = await fetch(`${API_BASE}/delete/${username}`, {
+    const token = localStorage.getItem('jwtToken');
+    if (!token) {
+      mostrarNotificacion('No estás autenticado. Por favor inicia sesión.', 'error');
+      return;
+    }
+
+    const response = await fetch(`http://localhost:8080/api/usuario/${id}`, {
       method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     });
-    if (!res.ok) throw new Error('Error al eliminar usuario');
-    showNotification('Usuario eliminado');
-    await loadUsuarios();
+
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+
+    mostrarNotificacion('Usuario eliminado', 'success');
+    cargarUsuarios();
+
   } catch (error) {
-    showNotification(error.message, true);
+    mostrarNotificacion('Error al eliminar usuario: ' + error.message, 'error');
   }
 }
 
-// Escucha submit del form
-document.getElementById('usuarioForm').addEventListener('submit', saveUsuario);
+function limpiarFormulario() {
+  document.getElementById('usuarioForm').reset();
+  document.getElementById('editMode').value = 'false';
+  delete document.getElementById('usuarioForm').dataset.userId;
+}
 
-// Carga usuarios al iniciar
-loadUsuarios();
+function mostrarNotificacion(mensaje, tipo) {
+  const contenedor = document.getElementById('notificaciones');
+  const toast = document.createElement('div');
+  toast.className = `toast ${tipo}`;
+  toast.textContent = mensaje;
+
+  contenedor.appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 3000);
+}
