@@ -13,6 +13,17 @@ signInButton.addEventListener('click', () => {
   container.classList.remove("right-panel-active");
 });
 
+function parseJwt(token) {
+  try {
+    const base64Payload = token.split('.')[1];
+    const payload = atob(base64Payload);
+    return JSON.parse(payload);
+  } catch (e) {
+    console.error('Error decodificando JWT:', e);
+    return null;
+  }
+}
+
 async function login(username, password, redirectAfterLogin = true) {
   try {
     const response = await fetch('http://localhost:8080/auth/log-in', {
@@ -32,34 +43,41 @@ async function login(username, password, redirectAfterLogin = true) {
     }
 
     const data = await response.json();
-    console.log('Datos recibidos en login:', data); 
+    console.log('Datos recibidos en login:', data);
 
     // Guardar token en localStorage
-    localStorage.setItem('token', data.jwt || data.token);
+    const token = data.jwt || data.token;
+    localStorage.setItem('token', token);
 
     if (redirectAfterLogin) {
-      const roles = [];
+      // Decodificar JWT para extraer roles
+      const payload = parseJwt(token);
+      console.log('Payload JWT:', payload);
 
-      if (data.roles) {
-        if (Array.isArray(data.roles)) roles.push(...data.roles);
-        else if (typeof data.roles === 'string') roles.push(...data.roles.split(','));
-      }
-      if (data.authorities) {
-        if (Array.isArray(data.authorities)) roles.push(...data.authorities);
-        else if (typeof data.authorities === 'string') roles.push(...data.authorities.split(','));
-      }
-      if (data.roleListName) {
-        if (Array.isArray(data.roleListName)) roles.push(...data.roleListName);
+      let roles = [];
+
+      if (payload && payload.authorities) {
+        let allAuthorities = [];
+
+        if (typeof payload.authorities === 'string') {
+          allAuthorities = payload.authorities.split(',').map(r => r.trim());
+        } else if (Array.isArray(payload.authorities)) {
+          allAuthorities = payload.authorities;
+        }
+
+        // Filtrar solo roles que empiezan con ROLE_ y quitar ese prefijo
+        roles = allAuthorities
+          .filter(r => r.startsWith('ROLE_'))
+          .map(r => r.replace(/^ROLE_/, '').toUpperCase());
       }
 
-      const rolesUpper = roles.map(r => r.trim().toUpperCase());
-      console.log('Roles finales:', rolesUpper);
+      console.log('Roles extraídos del token:', roles);
 
-      if (rolesUpper.includes('CLIENTE')) {
+      if (roles.includes('CLIENTE')) {
         window.location.href = '/cliente/inicio';
-      } else if (rolesUpper.includes('PROVEEDOR')) {
+      } else if (roles.includes('PROVEEDOR')) {
         window.location.href = '/proveedor/inicio';
-      } else if (rolesUpper.includes('ADMINISTRADOR') || rolesUpper.includes('ADMIN')) {
+      } else if (roles.includes('ADMINISTRADOR') || roles.includes('ADMIN')) {
         window.location.href = '/administrador/dashboard';
       } else {
         alert('Rol no reconocido');
