@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ferre-prestamo - Proveedor</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/inicioP.css" />
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo-container">
+      <div class="logo-name">Ferre-prestamo</div>
+      <i class='bx bx-menu' id="btn-toggle"></i>
+    </div>
+
+    <ul class="nav-container">
+      <li>
+        <a href="/proveedor/inicio">
+          <i class='bx bx-home'></i>
+          <span class="links">Inicio</span>
+        </a>
+        <span class="tooltip">Inicio</span>
+      </li>
+      <li>
+        <a href="/proveedor/herramientas">
+          <i class='bx bx-wrench'></i>
+          <span class="links">Herramientas</span>
+        </a>
+        <span class="tooltip">Herramientas</span>
+      </li>
+      <li>
+        <a href="/proveedor/reservas">
+          <i class='bx bx-calendar-check'></i>
+          <span class="links">Reservas</span>
+        </a>
+        <span class="tooltip">Reservas</span>
+      </li>
+      <li>
+        <a href="/proveedor/facturacion">
+          <i class='bx bx-file'></i>
+          <span class="links">Facturación</span>
+        </a>
+        <span class="tooltip">Facturación</span>
+      </li>
+      <li>
+        <a href="/proveedor/notificaciones">
+          <i class='bx bx-bell'></i>
+          <span class="links">Notificaciones</span>
+        </a>
+        <span class="tooltip">Notificaciones</span>
+      </li>
+    </ul>
+
+    <div class="user">
+      <img src="/img/user.png" alt="User Image" />
+      <div class="user-details">
+        <span class="name">Proveedor</span>
+        <span class="job">Gestor</span>
+      </div>
+      <a href="/" title="Cerrar sesión">
+        <i class='bx bx-log-out' id="logout"></i>
+      </a>
+    </div>
+  </div>
+
+  <main class="main-content">
+    <section id="proveedor-dashboard">
+      <h1>Bienvenido, Proveedor</h1>
+      <p>Gestiona tus herramientas, reservas y facturación de forma eficiente.</p>
+
+      <!-- Resumen rápido -->
+      <div class="dashboard-summary">
+        <div class="card-summary">
+          <i class='bx bx-wrench'></i>
+          <h3>12</h3>
+          <p>Herramientas registradas</p>
+        </div>
+        <div class="card-summary">
+          <i class='bx bx-calendar-check'></i>
+          <h3>5</h3>
+          <p>Reservas activas</p>
+        </div>
+        <div class="card-summary">
+          <i class='bx bx-error'></i>
+          <h3>2</h3>
+          <p>Reportes de daño</p>
+        </div>
+        <div class="card-summary">
+          <i class='bx bx-credit-card'></i>
+          <h3>$850.000</h3>
+          <p>Total facturado</p>
+        </div>
+      </div>
+
+      <!-- Acciones rápidas -->
+      <div class="quick-actions">
+        <h2>Acciones rápidas</h2>
+        <button onclick="location.href='/proveedor/herramientas'">
+          <i class='bx bx-plus-circle'></i> Registrar herramienta
+        </button>
+        <button onclick="location.href='/proveedor/reservas'">
+          <i class='bx bx-check-circle'></i> Revisar reservas
+        </button>
+      </div>
+
+      <!-- Banner informativo -->
+      <div class="promo-banner">
+        <i class='bx bx-bulb'></i>
+        <span>Recuerda verificar las devoluciones programadas cada día para evitar retrasos.</span>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/inicioP.js"></script>
+</body>
+</html>

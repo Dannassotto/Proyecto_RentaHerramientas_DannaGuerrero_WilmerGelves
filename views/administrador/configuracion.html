@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Configuración - Panel Admin</title>
+  <link rel="stylesheet" href="/css/configuracion.css" />
+</head>
+<body>
+  <div class="config-container">
+    <nav class="config-sidebar">
+      <h2>Configuración</h2>
+      <ul>
+        <li class="active" data-section="cuenta">Cuenta</li>
+        <li data-section="privacidad">Privacidad y Seguridad</li>
+      </ul>
+    </nav>
+
+    <main class="config-main">
+      <!-- CUENTA -->
+      <section id="cuenta" class="config-section active">
+        <h3>Cuenta</h3>
+        <form id="form-perfil">
+          <label for="nombre">Nombre:</label>
+          <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" required />
+
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" placeholder="correo@ejemplo.com" required />
+
+          <button type="submit">Guardar Cambios</button>
+          <p class="form-message" id="perfil-msg"></p>
+        </form>
+      </section>
+
+      
+
+      <!-- PRIVACIDAD Y SEGURIDAD -->
+      <section id="privacidad" class="config-section">
+        <h3>Privacidad y Seguridad</h3>
+        <form id="form-seguridad">
+          <label for="password-old">Contraseña Actual:</label>
+          <input type="password" id="password-old" name="password-old" placeholder="********" required />
+
+          <label for="password-new">Nueva Contraseña:</label>
+          <input type="password" id="password-new" name="password-new" placeholder="Nueva contraseña" required />
+
+          <label for="password-confirm">Confirmar Nueva Contraseña:</label>
+          <input type="password" id="password-confirm" name="password-confirm" placeholder="Repite la contraseña" required />
+
+          <button type="submit">Cambiar Contraseña</button>
+          <p class="form-message" id="seguridad-msg"></p>
+        </form>
+
+        <div class="privacy-options">
+          <h4>Opciones de Privacidad</h4>
+          <label>
+            <input type="checkbox" id="data-sharing" />
+            Permitir compartir datos con terceros
+          </label>
+          <br />
+          <label>
+            <input type="checkbox" id="activity-tracking" />
+            Activar seguimiento de actividad
+          </label>
+        </div>
+      </section>
+    </main>
+  </div>
+  <a href="/administrador/dashboard" class="volver-btn">← Volver al Dashboard</a>
+
+
+  <script src="/js/configuracion.js"></script>
+</body>
+</html>

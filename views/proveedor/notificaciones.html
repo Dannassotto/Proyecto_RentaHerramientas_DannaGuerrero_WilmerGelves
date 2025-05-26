@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notificaciones - Ferre-prestamo</title>
+  <link rel="stylesheet" href="/css/notificaciones.css" />
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+</head>
+<body>
+  <section class="main-content" id="notificaciones">
+    <h1>Notificaciones</h1>
+    <p>Administra y visualiza las notificaciones enviadas a los clientes.</p>
+
+    <button class="btn-primary" onclick="abrirModal()">Nueva Notificación</button>
+
+    <table class="notificaciones-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Cliente</th>
+          <th>Mensaje</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Ana Ramírez</td>
+          <td>Recuerda devolver la herramienta prestada</td>
+          <td>2025-05-22</td>
+          <td>Enviado</td>
+          <td>
+            <button class="action-btn">Ver</button>
+            <button class="action-btn">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <a href="/proveedor/inicio" class="volver-btn">← Volver al Dashboard</a>
+
+  <div class="modal hidden" id="modal-notificacion">
+    <div class="modal-content">
+      <button class="close-btn" onclick="cerrarModal()">&times;</button>
+      <h2>Nueva Notificación</h2>
+      <form id="form-notificacion">
+        <label for="cliente">Cliente</label>
+        <select id="cliente" name="cliente">
+          <option value="1">Ana Ramírez</option>
+          <option value="2">Carlos López</option>
+        </select>
+
+        <label for="mensaje">Mensaje</label>
+        <input type="text" id="mensaje" name="mensaje" required />
+
+        <label for="estado">Estado</label>
+        <select id="estado" name="estado">
+          <option value="enviado">Enviado</option>
+          <option value="pendiente">Pendiente</option>
+        </select>
+
+        <button type="submit" class="btn-primary">Enviar Notificación</button>
+      </form>
+    </div>
+  </div>
+
+  
+  <script src="/js/notificaciones.js"></script>
+</body>
+</html>

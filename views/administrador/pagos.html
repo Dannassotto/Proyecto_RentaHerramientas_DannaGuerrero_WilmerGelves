@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <title>Pagos y Facturación</title>
+  <link rel="stylesheet" href="/css/pagos.css" />
+</head>
+<body>
+  <header>
+    <h1>Pagos y Facturación</h1>
+  </header>
+
+  <main>
+    <section class="form-section">
+      <h2>Registrar Pago</h2>
+      <form id="pagoForm">
+        <input type="hidden" id="editMode" value="false" />
+        <input type="text" id="cliente" placeholder="Nombre del Cliente" required />
+        <input type="number" id="monto" placeholder="Monto ($)" required />
+        <input type="date" id="fecha" required />
+        <select id="estado" required>
+          <option value="" disabled selected>Seleccione Estado</option>
+          <option value="Pagado">Pagado</option>
+          <option value="Pendiente">Pendiente</option>
+        </select>
+        <button type="submit">Guardar</button>
+      </form>
+    </section>
+
+    <section class="tabla-section">
+      <h2>Facturas Generadas</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Monto</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="pagosTableBody"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <a href="/administrador/dashboard" class="volver-btn">← Volver al Dashboard</a>
+
+  <div id="notificaciones" class="toast-container"></div>
+
+  <script src="/js/admin-pagos.js"></script>
+</body>
+</html>

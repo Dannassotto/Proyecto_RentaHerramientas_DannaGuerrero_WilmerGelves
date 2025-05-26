@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <title>Historial de Alquileres</title>
+  <link rel="stylesheet" href="/css/historial.css" />
+</head>
+<body>
+  <header>
+    <h1>Historial de Alquileres</h1>
+  </header>
+
+  <main>
+    <section class="filtros-section">
+      <h2>Buscar Alquileres</h2>
+      <input type="text" id="buscarCliente" placeholder="Buscar por Cliente..." />
+      <select id="filtroEstado">
+        <option value="">Todos los estados</option>
+        <option value="Devuelto">Devuelto</option>
+        <option value="En curso">En curso</option>
+        <option value="Retrasado">Retrasado</option>
+      </select>
+    </section>
+
+    <section class="tabla-section">
+      <h2>Listado de Alquileres</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Herramienta</th>
+            <th>Fecha Inicio</th>
+            <th>Fecha Fin</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaAlquileres"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <a href="/administrador/dashboard" class="volver-btn">← Volver al Dashboard</a>
+
+  <div id="notificaciones" class="toast-container"></div>
+
+  <script src="/js/historial-alquileres.js"></script>
+</body>
+</html>

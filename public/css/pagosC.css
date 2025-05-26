@@ -1,0 +1,91 @@
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #ebe5e5;
+  color: #141414;
+  padding: 20px;
+  min-height: 100vh;
+}
+h1 {
+  color: #d87325;
+  margin-bottom: 20px;
+  text-align: center;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #e2cccc;
+  border-radius: 8px;
+  overflow: hidden;
+}
+thead {
+  background-color: #d87325;
+  color: #fff;
+}
+th, td {
+  padding: 12px 15px;
+  text-align: left;
+}
+tbody tr:hover {
+  background-color: #c2742c;
+}
+button {
+  background-color: #d87325;
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+button:hover {
+  background-color: #b05c1b;
+}
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.volver-btn {
+  display: block;
+  text-align: center;
+  color: #e87722;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 20px;
+}
+@media (max-width: 600px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+  thead tr {
+    display: none;
+  }
+  tbody tr {
+    margin-bottom: 15px;
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    padding: 10px;
+  }
+  tbody td {
+    padding-left: 50%;
+    position: relative;
+    text-align: right;
+  }
+  tbody td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 15px;
+    width: 45%;
+    padding-left: 15px;
+    font-weight: bold;
+    text-align: left;
+    color: #d87325;
+  }
+  button {
+    width: 100%;
+    margin-top: 10px;
+  }
+}

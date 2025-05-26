@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ferre-prestamo - Proveedor - Herramientas</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/herramientasP.css" />
+</head>
+<body>
+  <main class="main-content">
+    <section id="herramientas">
+      <h1>Gestión de Herramientas</h1>
+      <p>Administra tu inventario de herramientas y equipos.</p>
+
+      <button id="btn-add-tool" class="btn-primary" type="button">+ Agregar herramienta</button>
+
+      <table class="tools-table">
+        <thead>
+          <tr>
+            <th>Imagen</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th>Disponibilidad</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><img src="/img/taladro.png" alt="Taladro Percutor" class="tool-img" /></td>
+            <td>Taladro Percutor</td>
+            <td>Ideal para concreto y mampostería.</td>
+            <td>Bueno</td>
+            <td>Disponible</td>
+            <td>
+              <button class="btn-edit" type="button">Editar</button>
+              <button class="btn-delete" type="button">Eliminar</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div id="modal-tool" class="modal hidden" aria-hidden="true">
+        <div class="modal-content">
+          <button class="close-btn" id="close-modal" aria-label="Cerrar modal">&times;</button>
+          <h2 id="modal-title">Agregar herramienta</h2>
+          <form id="tool-form">
+            <label for="tool-name">Nombre:</label>
+            <input type="text" id="tool-name" name="tool-name" required />
+
+            <label for="tool-description">Descripción:</label>
+            <textarea id="tool-description" name="tool-description" required></textarea>
+
+            <label for="tool-status">Estado:</label>
+            <select id="tool-status" name="tool-status" required>
+              <option value="Bueno">Bueno</option>
+              <option value="Regular">Regular</option>
+              <option value="Malo">Malo</option>
+            </select>
+
+            <label for="tool-availability">Disponibilidad:</label>
+            <select id="tool-availability" name="tool-availability" required>
+              <option value="Disponible">Disponible</option>
+              <option value="Alquilado">Alquilado</option>
+              <option value="En reparación">En reparación</option>
+            </select>
+
+            <label for="tool-image">Imagen:</label>
+            <input type="file" id="tool-image" name="tool-image" accept="image/*" />
+
+            <button type="submit" class="btn-primary">Guardar</button>
+          </form>
+        </div>
+      </div>
+
+    </section>
+  </main>
+    <a href="/proveedor/inicio" class="volver-btn">← Volver al Dashboard</a>
+
+  <script src="/js/herramientasP.js"></script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ferre-prestamo - Cliente</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/inicio.css" />
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo-container">
+      <div class="logo-name">Ferre-prestamo</div>
+      <i class='bx bx-menu' id="btn-toggle"></i>
+    </div>
+
+    <ul class="nav-container">
+      <li>
+        <a href="/cliente/inicio">
+          <i class='bx bx-home'></i>
+          <span class="links">Inicio</span>
+        </a>
+        <span class="tooltip">Inicio</span>
+      </li>
+      <li>
+        <a href="/cliente/herramientas">
+          <i class='bx bx-wrench'></i>
+          <span class="links">Herramientas</span>
+        </a>
+        <span class="tooltip">Herramientas</span>
+      </li>
+      <li>
+        <a href="/cliente/alquileres">
+          <i class='bx bx-archive'></i>
+          <span class="links">Mis Alquileres</span>
+        </a>
+        <span class="tooltip">Mis Alquileres</span>
+      </li>
+      <li>
+        <a href="/cliente/pagos">
+          <i class='bx bx-wallet'></i>
+          <span class="links">Pagos</span>
+        </a>
+        <span class="tooltip">Pagos</span>
+      </li>
+      <li>
+        <a href="/cliente/soporte">
+          <i class='bx bx-headphone'></i>
+          <span class="links">Soporte</span>
+        </a>
+        <span class="tooltip">Soporte</span>
+      </li>
+      <li>
+        <a href="/cliente/perfil">
+          <i class='bx bx-user-circle'></i>
+          <span class="links">Perfil</span>
+        </a>
+        <span class="tooltip">Perfil</span>
+      </li>
+    </ul>
+
+    <div class="user">
+      <img src="/img/user.png" alt="User Image" />
+      <div class="user-details">
+        <span class="name">Cliente</span>
+        <span class="job">Usuario</span>
+      </div>
+      <a href="/" title="Cerrar sesión">
+        <i class='bx bx-log-out' id="logout"></i>
+      </a>
+    </div>
+  </div>
+
+  <main class="main-content">
+    <section id="inicio">
+      <h1>Bienvenido a Ferre-prestamo</h1>
+      <p>Explora las mejores herramientas y equipos para tu construcción.</p>
+
+      <!-- Resumen del usuario -->
+      <div class="dashboard-summary">
+        <div class="card-summary">
+          <i class='bx bx-wrench'></i>
+          <h3>3</h3>
+          <p>Herramientas alquiladas</p>
+        </div>
+        <div class="card-summary">
+          <i class='bx bx-time-five'></i>
+          <h3>2</h3>
+          <p>Próximas devoluciones</p>
+        </div>
+        <div class="card-summary">
+          <i class='bx bx-credit-card'></i>
+          <h3>$150.000</h3>
+          <p>Pagos pendientes</p>
+        </div>
+      </div>
+
+      <!-- Promociones activas -->
+      <div class="promo-banner">
+        <i class='bx bx-gift'></i>
+        <span>¡20% de descuento en alquiler de andamios hasta el 30 de mayo!</span>
+      </div>
+
+      <!-- Herramientas populares -->
+      <section class="popular-tools">
+        <h2>Herramientas populares</h2>
+        <div class="tool-cards">
+          <div class="tool-card">
+            <img src="/img/taladro.png" alt="Taladro Percutor" />
+            <h4>Taladro Percutor</h4>
+            <p>Ideal para concreto y mampostería.</p>
+            <button>Ver más</button>
+          </div>
+          <div class="tool-card">
+            <img src="/img/mezcladora.png" alt="Mezcladora de Cemento" />
+            <h4>Mezcladora de Cemento</h4>
+            <p>Perfecta para grandes obras.</p>
+            <button>Ver más</button>
+          </div>
+          <div class="tool-card">
+            <img src="/img/andamio.png" alt="Andamio Modular" />
+            <h4>Andamio Modular</h4>
+            <p>Fácil de armar, seguro y estable.</p>
+            <button>Ver más</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Consejos de uso -->
+      <section class="tool-tips">
+        <h2>Consejos de uso seguro</h2>
+        <ul>
+          <li>Usa guantes y gafas al operar herramientas eléctricas.</li>
+          <li>Revisa el estado del cableado antes de conectar.</li>
+          <li>No utilices herramientas en superficies húmedas.</li>
+          <li>Reporta cualquier falla de funcionamiento.</li>
+        </ul>
+      </section>
+    </section>
+  </main>
+
+  <script src="/js/inicio.js"></script>
+</body>
+</html>

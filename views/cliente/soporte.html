@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Soporte - Dashboard</title>
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="/css/soporte.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <span>Soporte</span>
+  </nav>
+  <main class="main-content">
+    <section class="ticket-form">
+      <h2>Crear nuevo ticket</h2>
+      <form id="ticketForm">
+        <label for="subject">Asunto:</label>
+        <input type="text" id="subject" required />
+        
+        <label for="description">Descripción:</label>
+        <textarea id="description" rows="5" required></textarea>
+        
+        <button type="submit">Enviar</button>
+      </form>
+    </section>
+
+    <section class="ticket-list">
+      <h2>Mis tickets</h2>
+      <div id="ticketsContainer">
+        <!-- Tickets se cargan aquí -->
+      </div>
+    </section>
+  </main>
+  
+    <a href="/cliente/inicio" class="volver-btn">← Volver al Dashboard</a>
+
+
+  <script src="/js/soporte.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Herramientas</title>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/herramientas.css" />
+</head>
+<body>
+
+  <header class="navbar">
+    <h1>Herramientas Disponibles</h1>
+  </header>
+
+  <main class="main-content">
+    <div class="search-container">
+      <input type="text" id="search-tools" placeholder="Buscar herramienta..." />
+      <!-- Botón para recargar herramientas -->
+      <button id="recargar-btn" title="Recargar herramientas" aria-label="Recargar herramientas">
+        <i class='bx bx-refresh'></i>
+      </button>
+    </div>
+
+    <div id="tool-cards">
+      <!-- Ejemplo visual de una tarjeta con botón Reservar -->
+      <div class="tool-card ejemplo-card">
+        <img src="/images/default-tool.png" alt="Nombre herramienta" />
+        <h3>Nombre herramienta</h3>
+        <p>Descripción de la herramienta</p>
+        <p><strong>Precio:</strong> $0.00</p>
+        <p><strong>Stock:</strong> 0</p>
+        <button class="reservar-btn">
+          <i class='bx bx-calendar-plus'></i> Reservar
+        </button>
+      </div>
+      <!-- Las tarjetas reales se insertan dinámicamente aquí -->
+    </div>
+  </main>
+
+  <a href="/cliente/inicio" class="volver-btn">← Volver al Dashboard</a>
+
+  <script src="/js/herramientas.js"></script>
+</body>
+</html>
