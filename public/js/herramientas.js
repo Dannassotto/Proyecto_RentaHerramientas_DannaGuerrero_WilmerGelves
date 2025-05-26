@@ -1,4 +1,6 @@
+
 const API_BASE = 'http://localhost:8080/api/herramienta';
+const RESERVA_API = 'http://localhost:8080/api/reserva/save';
 
 // --- Referencias a los elementos del DOM ---
 const searchInput = document.getElementById('search-tools');
@@ -15,16 +17,12 @@ function getToken() {
         return null;
     }
 
-    console.log('Token original:', token.substring(0, 50) + '...');
-
     if (token.startsWith('Bearer ')) {
         token = token.slice(7);
-        console.log('Token sin Bearer prefix:', token.substring(0, 50) + '...');
     }
 
     const partes = token.split('.');
     if (partes.length !== 3) {
-        console.error('Token no tiene 3 partes (no es JWT válido)');
         alert('Token inválido.');
         localStorage.removeItem('token');
         return null;
@@ -34,48 +32,32 @@ function getToken() {
         const payload = JSON.parse(atob(partes[1]));
         const ahora = Date.now();
 
-        console.log('Payload decodificado:', payload);
-        console.log('Tiempo actual:', new Date(ahora));
-        console.log('Expiración del token:', new Date(payload.exp * 1000));
-
         if (payload.exp * 1000 < ahora) {
-            console.error('Token expirado');
             alert('Tu sesión ha expirado.');
             localStorage.removeItem('token');
             return null;
         }
 
         const authorities = payload.authorities || [];
-        let rol = 'desconocido';
         let authoritiesList = [];
 
         if (typeof authorities === 'string') {
             authoritiesList = authorities.split(',').map(auth => auth.trim());
-            rol = authorities;
         } else if (Array.isArray(authorities)) {
             authoritiesList = authorities;
-            rol = authorities.join(', ');
         }
-
-        console.log(`Token válido. Rol del usuario: ${rol}`);
-        console.log('Authorities completas:', authorities);
-        console.log('Authorities como array:', authoritiesList);
 
         const esCliente = authoritiesList.includes('CLIENTE') ||
             authoritiesList.includes('ROLE_CLIENTE') ||
             authoritiesList.some(auth => auth.includes('CLIENTE')) ||
             (typeof authorities === 'string' && authorities.includes('CLIENTE'));
 
-        if (esCliente) {
-            console.log('%c¡Este token pertenece a un CLIENTE!', 'color: green; font-weight: bold;');
-        } else {
-            console.warn('Este token NO pertenece a un cliente.');
+        if (!esCliente) {
             alert('No tienes permisos de cliente para ver las herramientas.');
             return null;
         }
 
     } catch (e) {
-        console.error('Error al decodificar token:', e);
         alert('Token inválido.');
         localStorage.removeItem('token');
         return null;
@@ -117,7 +99,6 @@ async function cargarHerramientas() {
         mostrarHerramientas(herramientas);
 
     } catch (error) {
-        console.error('Error de conexión:', error);
         alert('No se pudo conectar con el servidor.');
         toolCardsContainer.innerHTML = '<p>Error de conexión con el servidor.</p>';
     }
@@ -132,9 +113,7 @@ function mostrarHerramientas(herramientas) {
         return;
     }
 
-    console.log(`Mostrando ${herramientas.length} herramientas`);
-
-    herramientas.forEach(herramienta => {
+    herramientas.forEach((herramienta, idx) => {
         const card = document.createElement('div');
         card.classList.add('tool-card');
 
@@ -144,15 +123,66 @@ function mostrarHerramientas(herramientas) {
         const stock = herramienta.stock ?? 0;
         const imagen = herramienta.imagen?.trim() !== '' ? herramienta.imagen : '/images/default-tool.png';
 
+        // Botón reservar con id único
+        const reservarBtnId = `reservar-btn-${idx}`;
+
         card.innerHTML = `
       <img src="${imagen}" alt="${nombre}" onerror="this.src='/images/default-tool.png'" />
       <h3>${nombre}</h3>
       <p>${descripcion}</p>
       <p><strong>Precio:</strong> $${precio}</p>
       <p><strong>Stock:</strong> ${stock}</p>
+      <button class="reservar-btn" id="${reservarBtnId}">
+        <i class='bx bx-calendar-plus'></i> Reservar
+      </button>
     `;
 
         toolCardsContainer.appendChild(card);
+
+        // Evento para el botón de reservar
+        setTimeout(() => {
+            const reservarBtn = document.getElementById(reservarBtnId);
+            if (reservarBtn) {
+                reservarBtn.addEventListener('click', async () => {
+                    // Aquí puedes pedir fechas al usuario, por ahora usamos hoy y hoy+3 días
+                    const hoy = new Date();
+                    const fechaInicio = hoy.toISOString().slice(0, 10);
+                    const fechaFin = new Date(hoy.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+                    const token = getToken();
+                    if (!token) return;
+
+                    try {
+                        const response = await fetch(RESERVA_API, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                fechaInicio: fechaInicio,
+                                fechaFin: fechaFin,
+                                estadoReserva: "Activo",
+                                herramientaReserva: { id: herramienta.id }
+                                // Si tienes datos del cliente logueado, puedes agregar: cliente: { id: ... }
+                            })
+                        });
+
+                        if (response.ok) {
+                            alert(`¡Reserva realizada para "${nombre}"!\nDel ${fechaInicio} al ${fechaFin}`);
+                            // Aquí podrías actualizar la tabla de reservas si lo deseas
+                        } else {
+                            const errorText = await response.text();
+                            alert(`Error al reservar: ${response.status} - ${errorText}`);
+                        }
+                    } catch (err) {
+                        alert('Error de red al reservar la herramienta.');
+                        console.error(err);
+                    }
+                });
+            }
+        }, 0);
     });
 }
 
@@ -171,7 +201,6 @@ if (searchInput) {
 
 // --- Recargar herramientas manualmente ---
 function recargarHerramientas() {
-    console.log('Recargando herramientas...');
     cargarHerramientas();
 }
 
@@ -184,8 +213,6 @@ async function probarEndpoint() {
     const token = getToken();
     if (!token) return;
 
-    console.log('=== DEBUGGING ENDPOINT ===');
-
     const variacionesToken = [
         { name: 'Token sin Bearer', value: token },
         { name: 'Token con Bearer', value: `Bearer ${token}` },
@@ -193,9 +220,6 @@ async function probarEndpoint() {
     ];
 
     for (const variacion of variacionesToken) {
-        console.log(`\n--- Probando: ${variacion.name} ---`);
-        console.log('Valor:', variacion.value.substring(0, 50) + '...');
-
         try {
             const response = await fetch(`${API_BASE}/findAll`, {
                 method: 'GET',
@@ -205,8 +229,6 @@ async function probarEndpoint() {
                     'Content-Type': 'application/json'
                 }
             });
-
-            console.log(`Status: ${response.status}`);
 
             if (response.ok) {
                 const data = await response.json();
@@ -221,8 +243,6 @@ async function probarEndpoint() {
             console.error('Error de red:', error);
         }
     }
-
-    console.log('=== FIN DEBUGGING ===');
 }
 
 // --- Función para probar otros endpoints ---
@@ -246,13 +266,9 @@ async function probarOtrosEndpoints() {
         '/health'
     ];
 
-    console.log('=== PROBANDO OTROS ENDPOINTS ===');
-
     for (const baseUrl of baseUrls) {
         for (const endpoint of endpoints) {
             const url = `${baseUrl}${endpoint}`;
-            console.log(`\nProbando: ${url}`);
-
             try {
                 const response = await fetch(url, {
                     method: 'GET',
@@ -262,7 +278,6 @@ async function probarOtrosEndpoints() {
                     }
                 });
 
-                console.log(`Status: ${response.status}`);
                 const texto = await response.text();
                 console.log('Respuesta:', texto);
 
@@ -271,6 +286,4 @@ async function probarOtrosEndpoints() {
             }
         }
     }
-
-    console.log('=== FIN DE PRUEBAS ===');
 }

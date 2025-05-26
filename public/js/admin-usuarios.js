@@ -135,6 +135,7 @@ async function cargarUsuarios() {
 }
 
 // Cargar datos de un usuario para edición
+
 async function cargarUsuarioParaEditar(username) {
   try {
     const token = getToken();
@@ -168,11 +169,15 @@ async function cargarUsuarioParaEditar(username) {
 
     emailInput.disabled = true;
 
+    // --- Scroll al formulario ---
+    usuarioForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
   } catch (error) {
     mostrarNotificacion('Error al cargar usuario', 'error');
     console.error(error);
   }
 }
+
 
 // Evento para guardar o actualizar usuario
 usuarioForm.addEventListener('submit', async (e) => {
