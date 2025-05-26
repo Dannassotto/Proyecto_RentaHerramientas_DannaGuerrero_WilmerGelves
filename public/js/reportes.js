@@ -1,65 +1,55 @@
-async function cargarResumen() {
-  const res = await fetch('/api/reportes/resumen');
-  const data = await res.json();
-  const resumenDiv = document.getElementById('resumen');
-  resumenDiv.innerHTML = `
-    <div class="card"><h3>Total Herramientas</h3><p>${data.totalHerramientas}</p></div>
-    <div class="card"><h3>Reservas Activas</h3><p>${data.reservasActivas}</p></div>
-    <div class="card"><h3>Herramientas Dañadas</h3><p>${data.herramientasDanadas}</p></div>
-    <div class="card"><h3>Ingresos Totales</h3><p>$${data.ingresosTotales}</p></div>
-  `;
-}
+document.addEventListener("DOMContentLoaded", () => {
+    cargarReportes();
+});
 
-async function cargarGraficos() {
-  const [usoRes, rentabilidadRes] = await Promise.all([
-    fetch('/api/reportes/uso'),
-    fetch('/api/reportes/rentabilidad')
-  ]);
-  const usoData = await usoRes.json();
-  const rentabilidadData = await rentabilidadRes.json();
+const API_BASE = "http://localhost:8080/api/reporte";
 
-  new Chart(document.getElementById('graficoUso'), {
-    type: 'bar',
-    data: {
-      labels: usoData.map(e => e.nombre),
-      datasets: [{
-        label: 'Veces alquilada',
-        data: usoData.map(e => e.cantidad),
-        backgroundColor: '#4e73df'
-      }]
+function mostrarNotificacion(mensaje, tipo = "info") {
+    let contenedor = document.getElementById("notificaciones");
+    if (!contenedor) {
+        contenedor = document.createElement("div");
+        contenedor.id = "notificaciones";
+        document.body.appendChild(contenedor);
     }
-  });
 
-  new Chart(document.getElementById('graficoRentabilidad'), {
-    type: 'pie',
-    data: {
-      labels: rentabilidadData.map(e => e.nombre),
-      datasets: [{
-        label: 'Ingresos',
-        data: rentabilidadData.map(e => e.ingresos),
-        backgroundColor: ['#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b']
-      }]
-    }
-  });
-}
+    const notificacion = document.createElement("div");
+    notificacion.textContent = mensaje;
+    notificacion.className = `notificacion ${tipo}`;
+    contenedor.appendChild(notificacion);
 
-async function cargarTablaRentabilidad() {
-  const res = await fetch('/api/reportes/rentabilidad');
-  const data = await res.json();
-  const tbody = document.querySelector('#tablaRentables tbody');
-  tbody.innerHTML = data.map(row => `
-    <tr>
-      <td>${row.nombre}</td>
-      <td>${row.cantidad}</td>
-      <td>$${row.ingresos}</td>
-    </tr>
-  `).join('');
+    setTimeout(() => {
+        contenedor.removeChild(notificacion);
+    }, 3000);
 }
 
 async function cargarReportes() {
-  await cargarResumen();
-  await cargarGraficos();
-  await cargarTablaRentabilidad();
-}
+    const token = localStorage.getItem("token");
+    if (!token) {
+        mostrarNotificacion("No autorizado. Por favor, inicia sesión.", "error");
+        return;
+    }
 
-window.onload = cargarReportes;
+    try {
+        const res = await fetch(`${API_BASE}/findAll`, {
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!res.ok) {
+            if (res.status === 401) {
+                mostrarNotificacion("No autorizado. Token inválido o expirado.", "error");
+            } else {
+                mostrarNotificacion("Error al obtener los reportes.", "error");
+            }
+            return;
+        }
+
+        const data = await res.json();
+        mostrarReportesEnTabla(data);
+    } catch (error) {
+        console.error("Error al cargar reportes:", error);
+        mostrarNotificacion("Error de conexión con el servidor.", "error");
+    }
+}
