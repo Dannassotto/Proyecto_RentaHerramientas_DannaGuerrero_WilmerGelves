@@ -287,3 +287,8 @@ async function probarOtrosEndpoints() {
         }
     }
 }
+
+// --- Cargar herramientas automáticamente al abrir la página ---
+document.addEventListener('DOMContentLoaded', () => {
+    cargarHerramientas();
+});
