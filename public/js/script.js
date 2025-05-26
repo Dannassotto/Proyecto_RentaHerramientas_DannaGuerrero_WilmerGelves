@@ -1,3 +1,4 @@
+// --- Toggle entre formularios de registro e inicio de sesión ---
 const container = document.getElementById('container');
 const signUpButton = document.getElementById('signUp');
 const signInButton = document.getElementById('signIn');
@@ -13,6 +14,7 @@ signInButton.addEventListener('click', () => {
   container.classList.remove("right-panel-active");
 });
 
+// --- Función para decodificar el JWT ---
 function parseJwt(token) {
   try {
     const base64Payload = token.split('.')[1];
@@ -24,6 +26,25 @@ function parseJwt(token) {
   }
 }
 
+// --- Función para extraer roles de diferentes formatos ---
+function parseRoles(rawRoles) {
+  if (!rawRoles) return [];
+  if (typeof rawRoles === 'string') {
+    return rawRoles.split(',').map(r => r.trim().replace(/^ROLE_/, '').toUpperCase());
+  } else if (Array.isArray(rawRoles)) {
+    return rawRoles.map(r => {
+      if (typeof r === 'string') {
+        return r.replace(/^ROLE_/, '').toUpperCase();
+      } else if (r.authority) {
+        return r.authority.replace(/^ROLE_/, '').toUpperCase();
+      }
+      return '';
+    }).filter(r => r);
+  }
+  return [];
+}
+
+// --- Iniciar sesión ---
 async function login(username, password, redirectAfterLogin = true) {
   try {
     const response = await fetch('http://localhost:8080/auth/log-in', {
@@ -45,30 +66,30 @@ async function login(username, password, redirectAfterLogin = true) {
     const data = await response.json();
     console.log('Datos recibidos en login:', data);
 
-    // Guardar token en localStorage
+    // Guardar solo el token JWT puro (sin "Bearer ")
     const token = data.jwt || data.token;
+    if (!token) {
+      alert('No se recibió token en la respuesta');
+      return;
+    }
     localStorage.setItem('token', token);
 
     if (redirectAfterLogin) {
-      // Decodificar JWT para extraer roles
       const payload = parseJwt(token);
-      console.log('Payload JWT:', payload);
+      console.log('Payload completo del JWT:', payload);
 
       let roles = [];
 
-      if (payload && payload.authorities) {
-        let allAuthorities = [];
-
-        if (typeof payload.authorities === 'string') {
-          allAuthorities = payload.authorities.split(',').map(r => r.trim());
-        } else if (Array.isArray(payload.authorities)) {
-          allAuthorities = payload.authorities;
+      if (payload) {
+        if (payload.authorities) {
+          roles = parseRoles(payload.authorities);
+        } else if (payload.roles) {
+          roles = parseRoles(payload.roles);
+        } else if (payload.role) {
+          roles = parseRoles([payload.role]);
+        } else {
+          console.warn('No se encontraron roles en el token');
         }
-
-        // Filtrar solo roles que empiezan con ROLE_ y quitar ese prefijo
-        roles = allAuthorities
-          .filter(r => r.startsWith('ROLE_'))
-          .map(r => r.replace(/^ROLE_/, '').toUpperCase());
       }
 
       console.log('Roles extraídos del token:', roles);
@@ -90,6 +111,7 @@ async function login(username, password, redirectAfterLogin = true) {
   }
 }
 
+// --- Registro de usuario ---
 async function signUp(nombre, email, contraseña) {
   try {
     const response = await fetch('http://localhost:8080/auth/sign-up', {
@@ -124,7 +146,7 @@ async function signUp(nombre, email, contraseña) {
     alert('Registro exitoso. Redirigiendo...');
     signUpForm.reset();
 
-    // Luego iniciar sesión y redirigir según rol
+    // Inicia sesión automáticamente después de registrarse
     await login(email, contraseña, true);
 
   } catch (error) {
@@ -133,6 +155,7 @@ async function signUp(nombre, email, contraseña) {
   }
 }
 
+// --- Evento submit para el login ---
 signInForm.addEventListener('submit', (event) => {
   event.preventDefault();
 
@@ -147,6 +170,7 @@ signInForm.addEventListener('submit', (event) => {
   login(email, password);
 });
 
+// --- Evento submit para el registro ---
 signUpForm.addEventListener('submit', (event) => {
   event.preventDefault();
 

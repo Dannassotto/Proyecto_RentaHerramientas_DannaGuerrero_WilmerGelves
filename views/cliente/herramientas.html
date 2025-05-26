@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Herramientas</title>
-  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="/css/herramientas.css" />
 </head>
 <body>
@@ -16,13 +16,19 @@
   <main class="main-content">
     <div class="search-container">
       <input type="text" id="search-tools" placeholder="Buscar herramienta..." />
+      <!-- Botón para recargar herramientas -->
+      <button id="recargar-btn" title="Recargar herramientas" aria-label="Recargar herramientas">
+        <i class='bx bx-refresh'></i>
+      </button>
     </div>
+
     <div id="tool-cards">
       <!-- Aquí se insertan las cards dinámicamente -->
     </div>
   </main>
 
-<a href="/cliente/inicio" class="volver-btn">← Volver al Dashboard</a>
+  <a href="/cliente/inicio" class="volver-btn">← Volver al Dashboard</a>
+
   <script src="/js/herramientas.js"></script>
 </body>
 </html>

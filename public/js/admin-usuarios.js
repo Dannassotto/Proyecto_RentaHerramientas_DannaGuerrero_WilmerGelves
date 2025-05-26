@@ -1,7 +1,5 @@
-// URL base de la API de usuario
 const API_BASE = 'http://localhost:8080/api/usuario';
 
-// Referencias a los elementos del DOM
 const usuarioForm = document.getElementById('usuarioForm');
 const editModeInput = document.getElementById('editMode');
 const nombreInput = document.getElementById('nombre');
@@ -11,67 +9,100 @@ const rolSelect = document.getElementById('rol');
 const usuarioTableBody = document.getElementById('usuarioTableBody');
 const notificaciones = document.getElementById('notificaciones');
 
-// Obtiene el token del localStorage y redirige si no existe (protección de ruta)
+// Función para obtener token de localStorage (NO redirige)
 function getToken() {
   const token = localStorage.getItem('token');
   if (!token) {
-    alert('No autorizado. Por favor, inicia sesión.');
-    window.location.href = '/login.html';
+    mostrarNotificacion('No autorizado. Por favor, inicia sesión.', 'error');
+    return null;
   }
   return token;
 }
 
-// Muestra una notificación visual en pantalla (tipo: success o error)
+// Función para mostrar notificaciones temporales
 function mostrarNotificacion(mensaje, tipo = 'success') {
   const div = document.createElement('div');
   div.className = `toast ${tipo}`;
   div.textContent = mensaje;
   notificaciones.appendChild(div);
-  setTimeout(() => div.remove(), 3000); // Desaparece a los 3 segundos
+  setTimeout(() => div.remove(), 3000);
 }
 
-// Carga todos los usuarios desde el backend y los muestra en una tabla
+// Función para extraer roles de cualquier formato y devolver string legible
+function extraerRoles(rolesData) {
+  if (!rolesData) return '';
+
+  let rolesArray = [];
+
+  if (typeof rolesData === 'string') {
+    rolesArray = rolesData.split(',').map(r => r.trim());
+  } else if (Array.isArray(rolesData)) {
+    rolesArray = rolesData.map(r => {
+      if (typeof r === 'string') return r;
+      if (typeof r === 'object' && (r.rol || r.name)) return r.rol || r.name;
+      return '';
+    }).filter(r => r);
+  } else {
+    console.warn('Formato inesperado en roles:', rolesData);
+  }
+
+  const result = rolesArray
+    .map(r => r.replace(/^ROLE_/, '').toUpperCase())
+    .join(', ');
+
+  return result;
+}
+
+// Función para mapear nombre de rol a id de select
+function mapRolNombreAId(rolNombre) {
+  if (!rolNombre) return '';
+  switch (rolNombre.toUpperCase()) {
+    case 'ADMINISTRADOR': return '1';
+    case 'PROVEEDOR': return '2';
+    case 'CLIENTE': return '3';
+    default: return '';
+  }
+}
+
+// Función para mapear id a nombre de rol
+function mapRolIdANombre(id) {
+  switch (id) {
+    case '1': return 'ADMINISTRADOR';
+    case '2': return 'PROVEEDOR';
+    case '3': return 'CLIENTE';
+    default: return '';
+  }
+}
+
+// Cargar todos los usuarios y mostrarlos en la tabla
 async function cargarUsuarios() {
   try {
     const token = getToken();
+    if (!token) return;
+
     const res = await fetch(`${API_BASE}/findAll`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
 
-    // Si el token expiró, redirige al login
     if (res.status === 401) {
-      alert('Sesión expirada. Por favor, inicia sesión de nuevo.');
+      mostrarNotificacion('Sesión expirada o token inválido. Por favor, vuelve a iniciar sesión.', 'error');
       localStorage.removeItem('token');
-      window.location.href = '/login.html';
       return;
     }
 
     if (!res.ok) throw new Error('Error cargando usuarios');
 
     const usuarios = await res.json();
-    usuarioTableBody.innerHTML = ''; // Limpia la tabla
+    usuarioTableBody.innerHTML = '';
 
     usuarios.forEach(usuario => {
-      let rolNombre = 'Desconocido';
-
-      // Extrae el nombre del rol desde el arreglo o propiedad
-      if (Array.isArray(usuario.roles) && usuario.roles.length > 0) {
-        if (typeof usuario.roles[0] === 'string') {
-          rolNombre = usuario.roles[0];
-        } else if (usuario.roles[0].rol) {
-          rolNombre = usuario.roles[0].rol;
-        }
-      } else if (typeof usuario.roles === 'string') {
-        rolNombre = usuario.roles;
-      }
-
-      // Crea una fila en la tabla con los datos del usuario
+      const rolesStr = extraerRoles(usuario.roles);
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${usuario.id || ''}</td>
-        <td>${usuario.nombre}</td>
-        <td>${usuario.username}</td>
-        <td>${rolNombre}</td>
+        <td>${usuario.nombre || ''}</td>
+        <td>${usuario.username || ''}</td>
+        <td>${rolesStr}</td>
         <td>
           <button class="editar-btn" data-username="${usuario.username}"><i class='bx bx-edit'></i></button>
           <button class="eliminar-btn" data-username="${usuario.username}"><i class='bx bx-trash'></i></button>
@@ -80,7 +111,7 @@ async function cargarUsuarios() {
       usuarioTableBody.appendChild(tr);
     });
 
-    // Agrega evento a los botones de editar
+    // Agregar eventos a botones de editar y eliminar
     document.querySelectorAll('.editar-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const username = btn.getAttribute('data-username');
@@ -88,7 +119,6 @@ async function cargarUsuarios() {
       });
     });
 
-    // Agrega evento a los botones de eliminar
     document.querySelectorAll('.eliminar-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const username = btn.getAttribute('data-username');
@@ -104,25 +134,39 @@ async function cargarUsuarios() {
   }
 }
 
-// Carga un usuario específico para editarlo
+// Cargar datos de un usuario para edición
 async function cargarUsuarioParaEditar(username) {
   try {
     const token = getToken();
+    if (!token) return;
+
     const res = await fetch(`${API_BASE}/find/${username}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
 
+    if (res.status === 401) {
+      mostrarNotificacion('Sesión expirada o token inválido. Por favor, vuelve a iniciar sesión.', 'error');
+      localStorage.removeItem('token');
+      return;
+    }
+
     if (!res.ok) throw new Error('Usuario no encontrado');
     const usuario = await res.json();
 
-    // Rellena el formulario con los datos del usuario
     editModeInput.value = 'true';
     nombreInput.value = usuario.nombre || '';
     emailInput.value = usuario.username || '';
-    contraseñaInput.value = ''; // Contraseña no se carga por seguridad
-    rolSelect.value = mapRolNombreAId(usuario.roles); // Convierte el nombre del rol a ID
+    contraseñaInput.value = '';
 
-    emailInput.disabled = true; // Deshabilita el campo email al editar
+    const rolesStr = extraerRoles(usuario.roles);
+    const primerRol = rolesStr.split(',')[0] || '';
+    rolSelect.value = mapRolNombreAId(primerRol);
+
+    if (!rolSelect.value) {
+      console.warn('No se pudo mapear el rol a select:', primerRol);
+    }
+
+    emailInput.disabled = true;
 
   } catch (error) {
     mostrarNotificacion('Error al cargar usuario', 'error');
@@ -130,59 +174,34 @@ async function cargarUsuarioParaEditar(username) {
   }
 }
 
-// Convierte el nombre del rol a su ID correspondiente
-function mapRolNombreAId(roles) {
-  if (!roles || roles.length === 0) return '';
-  const rolName = typeof roles[0] === 'string' ? roles[0] : roles[0].rol;
-  switch (rolName.toUpperCase()) {
-    case 'ADMINISTRADOR': return '1';
-    case 'PROVEEDOR': return '2';
-    case 'CLIENTE': return '3';
-    default: return '';
-  }
-}
-
-// Convierte el ID del rol a su nombre
-function mapRolIdANombre(id) {
-  switch (id) {
-    case '1': return 'ADMINISTRADOR';
-    case '2': return 'PROVEEDOR';
-    case '3': return 'CLIENTE';
-    default: return '';
-  }
-}
-
-// Evento al enviar el formulario (crear o actualizar usuario)
+// Evento para guardar o actualizar usuario
 usuarioForm.addEventListener('submit', async (e) => {
-  e.preventDefault(); // Evita recarga de la página
+  e.preventDefault();
 
   const nombre = nombreInput.value.trim();
   const email = emailInput.value.trim();
   const contraseña = contraseñaInput.value.trim();
   const rolId = rolSelect.value;
 
-  // Validación básica
   if (!nombre || !email || (!contraseña && editModeInput.value !== 'true') || !rolId) {
     mostrarNotificacion('Completa todos los campos', 'error');
     return;
   }
 
   const rolNombre = mapRolIdANombre(rolId);
-
-  // Crea el objeto usuario para enviar al backend
   const usuarioDTO = {
     nombre,
     username: email,
-    password: contraseña || undefined, // Si está vacío y en modo edición, se omite
+    password: contraseña || undefined,
     roleListName: [rolNombre]
   };
 
   try {
     const token = getToken();
-    let res;
+    if (!token) return;
 
+    let res;
     if (editModeInput.value === 'true') {
-      // Actualiza usuario existente
       res = await fetch(`${API_BASE}/update/${email}`, {
         method: 'PUT',
         headers: {
@@ -192,7 +211,6 @@ usuarioForm.addEventListener('submit', async (e) => {
         body: JSON.stringify(usuarioDTO),
       });
     } else {
-      // Crea nuevo usuario
       res = await fetch(`${API_BASE}/save`, {
         method: 'POST',
         headers: {
@@ -203,6 +221,12 @@ usuarioForm.addEventListener('submit', async (e) => {
       });
     }
 
+    if (res.status === 401) {
+      mostrarNotificacion('Sesión expirada o token inválido. Por favor, vuelve a iniciar sesión.', 'error');
+      localStorage.removeItem('token');
+      return;
+    }
+
     if (!res.ok) {
       const errorText = await res.text();
       mostrarNotificacion('Error: ' + errorText, 'error');
@@ -211,10 +235,10 @@ usuarioForm.addEventListener('submit', async (e) => {
 
     mostrarNotificacion(editModeInput.value === 'true' ? 'Usuario actualizado' : 'Usuario creado');
 
-    // Limpia el formulario y recarga la tabla
     usuarioForm.reset();
     editModeInput.value = 'false';
     emailInput.disabled = false;
+
     cargarUsuarios();
 
   } catch (error) {
@@ -223,16 +247,24 @@ usuarioForm.addEventListener('submit', async (e) => {
   }
 });
 
-// Elimina un usuario por su username
+// Eliminar usuario
 async function eliminarUsuario(username) {
   try {
     const token = getToken();
+    if (!token) return;
+
     const res = await fetch(`${API_BASE}/delete/${username}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`
       }
     });
+
+    if (res.status === 401) {
+      mostrarNotificacion('Sesión expirada o token inválido. Por favor, vuelve a iniciar sesión.', 'error');
+      localStorage.removeItem('token');
+      return;
+    }
 
     if (!res.ok) {
       const errorText = await res.text();
@@ -241,7 +273,7 @@ async function eliminarUsuario(username) {
     }
 
     mostrarNotificacion('Usuario eliminado');
-    cargarUsuarios(); // Recarga la tabla
+    cargarUsuarios();
 
   } catch (error) {
     mostrarNotificacion('Error al eliminar usuario', 'error');
@@ -249,5 +281,5 @@ async function eliminarUsuario(username) {
   }
 }
 
-// Carga los usuarios al iniciar la página
+// Al cargar la página, obtener la lista de usuarios
 cargarUsuarios();
