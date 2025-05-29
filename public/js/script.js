@@ -58,7 +58,7 @@ async function login(username, password, redirectAfterLogin = true) {
       try {
         const errorData = await response.json();
         if (errorData.message) message = errorData.message;
-      } catch (_) {}
+      } catch (_) { }
       alert('Error en login: ' + message);
       return;
     }
@@ -73,6 +73,64 @@ async function login(username, password, redirectAfterLogin = true) {
       return;
     }
     localStorage.setItem('token', token);
+
+    // --- GUARDAR proveedorId SI EL USUARIO ES PROVEEDOR ---
+    let proveedorId = null;
+    if (data.id && data.roles && Array.isArray(data.roles)) {
+      const esProveedor = data.roles.some(r => (r.roleEnum || '').toUpperCase().includes("PROVEEDOR"));
+      if (esProveedor) {
+        proveedorId = data.id;
+      }
+    }
+    if (!proveedorId) {
+      const payload = parseJwt(token);
+      if (payload && payload.id && payload.authorities) {
+        const roles = parseRoles(payload.authorities);
+        if (roles.some(r => r.includes("PROVEEDOR"))) {
+          proveedorId = payload.id;
+        }
+      }
+    }
+    if (proveedorId) {
+      localStorage.setItem('proveedorId', proveedorId);
+      console.log('ProveedorId guardado en localStorage:', proveedorId);
+    } else {
+      localStorage.removeItem('proveedorId');
+    }
+
+    // --- GUARDAR clienteId SI EL USUARIO ES CLIENTE ---
+    let clienteId = null;
+    if (data.id && data.roles && Array.isArray(data.roles)) {
+      const esCliente = data.roles.some(r => (r.roleEnum || '').toUpperCase().includes("CLIENTE"));
+      if (esCliente) {
+        clienteId = data.id;
+        console.log('Es cliente por roles en data:', clienteId);
+      } else {
+        console.log('No es cliente según roles en data:', data.roles);
+      }
+    }
+    // Si el backend responde con otro campo, por ejemplo data.clienteId
+    if (!clienteId && data.clienteId) {
+      clienteId = data.clienteId;
+      console.log('ClienteId encontrado en data.clienteId:', clienteId);
+    }
+    if (!clienteId) {
+      const payload = parseJwt(token);
+      if (payload && payload.id && payload.authorities) {
+        const roles = parseRoles(payload.authorities);
+        if (roles.some(r => r.includes("CLIENTE"))) {
+          clienteId = payload.id;
+          console.log('Es cliente por roles en JWT:', clienteId);
+        }
+      }
+    }
+    if (clienteId) {
+      localStorage.setItem('clienteId', clienteId);
+      console.log('ClienteId guardado en localStorage:', clienteId);
+    } else {
+      localStorage.removeItem('clienteId');
+      console.log('No se guardó clienteId. ¿Seguro que este usuario es cliente?');
+    }
 
     if (redirectAfterLogin) {
       const payload = parseJwt(token);
@@ -93,6 +151,9 @@ async function login(username, password, redirectAfterLogin = true) {
       }
 
       console.log('Roles extraídos del token:', roles);
+      if (roles.length > 0) {
+        localStorage.setItem('userRole', roles[0]);
+      }
 
       if (roles.includes('CLIENTE')) {
         window.location.href = '/cliente/inicio';
@@ -138,16 +199,16 @@ async function signUp(nombre, email, contraseña) {
         } else if (errorBody.message) {
           message = errorBody.message;
         }
-      } catch (_) {}
+      } catch (_) { }
       alert('Error en registro: ' + message);
       return;
     }
 
-    alert('Registro exitoso. Redirigiendo...');
+    alert('Registro exitoso. Ahora inicia sesión con tus credenciales.');
     signUpForm.reset();
 
-    // Inicia sesión automáticamente después de registrarse
-    await login(email, contraseña, true);
+    // NO inicies sesión automáticamente, deja que el usuario lo haga manualmente
+    // await login(email, contraseña, true);
 
   } catch (error) {
     alert('Error al conectar con el servidor');

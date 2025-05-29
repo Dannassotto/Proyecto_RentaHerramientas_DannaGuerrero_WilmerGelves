@@ -1,4 +1,3 @@
-
 const API_BASE = 'http://localhost:8080/api/herramienta';
 const RESERVA_API = 'http://localhost:8080/api/reserva/save';
 
@@ -49,8 +48,8 @@ function getToken() {
 
         const esCliente = authoritiesList.includes('CLIENTE') ||
             authoritiesList.includes('ROLE_CLIENTE') ||
-            authoritiesList.some(auth => auth.includes('CLIENTE')) ||
-            (typeof authorities === 'string' && authorities.includes('CLIENTE'));
+            authoritiesList.some(auth => auth.toUpperCase().includes('CLIENTE')) ||
+            (typeof authorities === 'string' && authorities.toUpperCase().includes('CLIENTE'));
 
         if (!esCliente) {
             alert('No tienes permisos de cliente para ver las herramientas.');
@@ -64,6 +63,30 @@ function getToken() {
     }
 
     return token;
+}
+
+// --- Función para obtener el id del cliente desde localStorage ---
+function getClienteId() {
+    const clienteId = localStorage.getItem('clienteId');
+    return clienteId ? parseInt(clienteId) : null;
+}
+
+// --- Función para pedir fechas al usuario ---
+async function pedirFechasReserva() {
+    let fechaInicio = prompt("Ingrese la fecha de inicio de la reserva (YYYY-MM-DD):");
+    if (!fechaInicio) return null;
+    let fechaFin = prompt("Ingrese la fecha de fin de la reserva (YYYY-MM-DD):");
+    if (!fechaFin) return null;
+    // Validación simple de formato
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(fechaInicio) || !/^\d{4}-\d{2}-\d{2}$/.test(fechaFin)) {
+        alert("Formato de fecha inválido.");
+        return null;
+    }
+    if (fechaFin < fechaInicio) {
+        alert("La fecha de fin no puede ser anterior a la de inicio.");
+        return null;
+    }
+    return { fechaInicio, fechaFin };
 }
 
 // --- Función para cargar herramientas desde la API ---
@@ -144,13 +167,27 @@ function mostrarHerramientas(herramientas) {
             const reservarBtn = document.getElementById(reservarBtnId);
             if (reservarBtn) {
                 reservarBtn.addEventListener('click', async () => {
-                    // Aquí puedes pedir fechas al usuario, por ahora usamos hoy y hoy+3 días
-                    const hoy = new Date();
-                    const fechaInicio = hoy.toISOString().slice(0, 10);
-                    const fechaFin = new Date(hoy.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-
                     const token = getToken();
                     if (!token) return;
+
+                    const clienteId = getClienteId();
+                    if (!clienteId) {
+                        alert("No se pudo identificar al cliente. Por favor, inicia sesión nuevamente.");
+                        return;
+                    }
+
+                    const fechas = await pedirFechasReserva();
+                    if (!fechas) return;
+
+                    // Ajusta el id del estadoReserva según tu lógica de negocio (por ejemplo, 1 = pendiente)
+                    const reservaDTO = {
+                        fechaInicio: fechas.fechaInicio,
+                        fechaFin: fechas.fechaFin,
+                        estadoReserva: { id: 1 }, // Cambia el id si tu backend usa otro valor por defecto
+                        herramientaReserva: { id: herramienta.id },
+                        cliente: { id: clienteId },
+                        pago: null // O el objeto pago si aplica
+                    };
 
                     try {
                         const response = await fetch(RESERVA_API, {
@@ -160,21 +197,17 @@ function mostrarHerramientas(herramientas) {
                                 'Content-Type': 'application/json',
                                 'Accept': 'application/json'
                             },
-                            body: JSON.stringify({
-                                fechaInicio: fechaInicio,
-                                fechaFin: fechaFin,
-                                estadoReserva: "Activo",
-                                herramientaReserva: { id: herramienta.id }
-                                // Si tienes datos del cliente logueado, puedes agregar: cliente: { id: ... }
-                            })
+                            body: JSON.stringify(reservaDTO)
                         });
 
-                        if (response.ok) {
-                            alert(`¡Reserva realizada para "${nombre}"!\nDel ${fechaInicio} al ${fechaFin}`);
-                            // Aquí podrías actualizar la tabla de reservas si lo deseas
+                        if (response.status === 201) {
+                            alert(`¡Reserva realizada para "${nombre}"!\nDel ${fechas.fechaInicio} al ${fechas.fechaFin}`);
+                        } else if (response.status === 400) {
+                            const errorText = await response.text();
+                            alert("Datos inválidos para la reserva: " + errorText);
                         } else {
                             const errorText = await response.text();
-                            alert(`Error al reservar: ${response.status} - ${errorText}`);
+                            alert("Error al realizar la reserva: " + errorText);
                         }
                     } catch (err) {
                         alert('Error de red al reservar la herramienta.');
@@ -206,86 +239,6 @@ function recargarHerramientas() {
 
 if (recargarBtn) {
     recargarBtn.addEventListener('click', recargarHerramientas);
-}
-
-// --- Función de debugging para probar el endpoint ---
-async function probarEndpoint() {
-    const token = getToken();
-    if (!token) return;
-
-    const variacionesToken = [
-        { name: 'Token sin Bearer', value: token },
-        { name: 'Token con Bearer', value: `Bearer ${token}` },
-        { name: 'Token limpio', value: token.replace(/^Bearer\s+/, '') }
-    ];
-
-    for (const variacion of variacionesToken) {
-        try {
-            const response = await fetch(`${API_BASE}/findAll`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': variacion.value,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log('¡ÉXITO! Datos recibidos:', data);
-                return variacion;
-            } else {
-                const errorText = await response.text();
-                console.log(`Error ${response.status}: ${errorText}`);
-            }
-
-        } catch (error) {
-            console.error('Error de red:', error);
-        }
-    }
-}
-
-// --- Función para probar otros endpoints ---
-async function probarOtrosEndpoints() {
-    const token = getToken();
-    if (!token) return;
-
-    const baseUrls = [
-        'http://localhost:8080/api/herramienta',
-        'http://localhost:8080/api/herramientas',
-        'http://localhost:8080/herramienta',
-        'http://localhost:8080/herramientas'
-    ];
-
-    const endpoints = [
-        '/findAll',
-        '/all',
-        '/list',
-        '',
-        '/test',
-        '/health'
-    ];
-
-    for (const baseUrl of baseUrls) {
-        for (const endpoint of endpoints) {
-            const url = `${baseUrl}${endpoint}`;
-            try {
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json'
-                    }
-                });
-
-                const texto = await response.text();
-                console.log('Respuesta:', texto);
-
-            } catch (error) {
-                console.error('Error al conectar:', error);
-            }
-        }
-    }
 }
 
 // --- Cargar herramientas automáticamente al abrir la página ---

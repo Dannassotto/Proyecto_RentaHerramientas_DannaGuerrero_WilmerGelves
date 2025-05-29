@@ -39,15 +39,27 @@ function extraerRoles(rolesData) {
   } else if (Array.isArray(rolesData)) {
     rolesArray = rolesData.map(r => {
       if (typeof r === 'string') return r;
-      if (typeof r === 'object' && (r.rol || r.name)) return r.rol || r.name;
+      if (typeof r === 'object') {
+        // Soporta roleEnum, rol, name
+        if (r.roleEnum) return r.roleEnum;
+        if (r.rol) return r.rol;
+        if (r.name) return r.name;
+      }
       return '';
     }).filter(r => r);
   } else {
     console.warn('Formato inesperado en roles:', rolesData);
   }
 
+  // Traducción opcional
+  const traduccion = {
+    'ADMINISTRADOR': 'ADMINISTRADOR',
+    'PROVEEDOR': 'PROVEEDOR',
+    'CLIENTE': 'CLIENTE'
+  };
+
   const result = rolesArray
-    .map(r => r.replace(/^ROLE_/, '').toUpperCase())
+    .map(r => traduccion[r.replace(/^ROLE_/, '').toUpperCase()] || r.replace(/^ROLE_/, '').toUpperCase())
     .join(', ');
 
   return result;
@@ -97,12 +109,15 @@ async function cargarUsuarios() {
 
     usuarios.forEach(usuario => {
       const rolesStr = extraerRoles(usuario.roles);
+      const rolesBadges = rolesStr.split(',').map(role =>
+        `<span class="rol-badge">${role.trim()}</span>`
+      ).join(' ');
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${usuario.id || ''}</td>
         <td>${usuario.nombre || ''}</td>
         <td>${usuario.username || ''}</td>
-        <td>${rolesStr}</td>
+        <td>${rolesBadges}</td>
         <td>
           <button class="editar-btn" data-username="${usuario.username}"><i class='bx bx-edit'></i></button>
           <button class="eliminar-btn" data-username="${usuario.username}"><i class='bx bx-trash'></i></button>
@@ -135,7 +150,6 @@ async function cargarUsuarios() {
 }
 
 // Cargar datos de un usuario para edición
-
 async function cargarUsuarioParaEditar(username) {
   try {
     const token = getToken();
@@ -177,7 +191,6 @@ async function cargarUsuarioParaEditar(username) {
     console.error(error);
   }
 }
-
 
 // Evento para guardar o actualizar usuario
 usuarioForm.addEventListener('submit', async (e) => {
@@ -286,5 +299,4 @@ async function eliminarUsuario(username) {
   }
 }
 
-// Al cargar la página, obtener la lista de usuarios
 cargarUsuarios();

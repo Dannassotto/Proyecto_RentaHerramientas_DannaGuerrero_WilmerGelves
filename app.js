@@ -58,8 +58,8 @@ app.get('/administrador/alquileres', (req, res) => {
 app.get('/administrador/devoluciones', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'administrador', 'devoluciones.html'));
 });
-app.get('/administrador/incidencias', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'administrador', 'incidencias.html'));
+app.get('/administrador/herramientasA', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'administrador', 'herramientasA.html'));
 });
 app.get('/administrador/reportes', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'administrador', 'reportes.html'));

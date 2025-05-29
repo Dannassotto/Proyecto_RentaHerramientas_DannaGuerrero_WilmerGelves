@@ -6,6 +6,19 @@
   <title>Dashboard | Ferre-prestamo</title>
   <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
   <link rel="stylesheet" href="/css/dashboard.css" />
+  <style>
+    .rol-badge {
+      display: inline-block;
+      background: #e0e7ff;
+      color: #3730a3;
+      border-radius: 8px;
+      padding: 2px 8px;
+      font-size: 0.85em;
+      margin-right: 2px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+  </style>
 </head>
 <body>
   <!-- Barra lateral -->
@@ -63,9 +76,9 @@
       </li>
 
       <li>
-        <a href="/administrador/incidencias">
-          <i class='bx bx-error-alt'></i>
-          <span class="links">Incidencias</span>
+        <a href="/administrador/herramientasA">
+          <i class='bx bx-wrench'></i>
+          <span class="links">Herramientas</span>
         </a>
         <span class="tooltip">Incidencias</span>
       </li>
@@ -107,17 +120,17 @@
       <div class="card">
         <i class='bx bx-user'></i>
         <h3>Usuarios</h3>
-        <p>45 registrados</p>
+        <p id="total-usuarios">Cargando...</p>
       </div>
       <div class="card">
         <i class='bx bx-wrench'></i>
         <h3>Herramientas</h3>
-        <p>120 disponibles</p>
+        <p id="total-herramientas">Cargando...</p>
       </div>
       <div class="card">
         <i class='bx bx-calendar-check'></i>
         <h3>Préstamos</h3>
-        <p>20 activos</p>
+        <p id="total-prestamos">Cargando...</p>
       </div> 
     </div>
 
@@ -136,7 +149,6 @@
         <tbody id="usuarioTableBody"></tbody>
       </table>
     </div>
-
   </div>
 
   <script src="/js/dashboard.js"></script>

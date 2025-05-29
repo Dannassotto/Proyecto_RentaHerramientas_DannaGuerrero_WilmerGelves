@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Ferre-prestamo - Proveedor - Herramientas</title>
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/herramientasP.css" />
+  <link rel="stylesheet" href="/css/herramientasA.css" />
 </head>
 <body>
   <main class="main-content">
@@ -64,8 +64,12 @@
               <option value="5">Disponible</option>
             </select>
 
-            <!-- Campo oculto para el proveedor -->
-            <input type="hidden" id="tool-provider" name="tool-provider" />
+            <label for="tool-provider">Proveedor:</label>
+            <select id="tool-provider" name="tool-provider" class="input" required>
+              <!-- Llena dinámicamente con los proveedores disponibles, o pon el id del proveedor logueado -->
+              <!-- Ejemplo: -->
+              <!-- <option value="1">Proveedor Principal</option> -->
+            </select>
 
             <label for="tool-image">Imagen:</label>
             <input type="file" id="tool-image" name="tool-image" class="input" accept="image/*" />
@@ -76,7 +80,7 @@
       </div>
     </section>
   </main>
-  <a href="/proveedor/inicio" class="volver-btn">← Volver al Dashboard</a>
-  <script src="/js/herramientasP.js"></script>
+  <a href="/administrador/dashboard" class="volver-btn">← Volver al Dashboard</a>
+  <script src="/js/herramientasA.js"></script>
 </body>
 </html>

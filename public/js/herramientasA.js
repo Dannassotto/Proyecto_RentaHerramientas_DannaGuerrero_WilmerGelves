@@ -9,9 +9,36 @@ const modalTitle = document.getElementById("modal-title");
 // Estado para saber si estamos editando o agregando
 let editToolId = null;
 
-// Obtén el id del proveedor logueado (debes guardarlo en localStorage al iniciar sesión)
-function getProveedorIdLogueado() {
-  return parseInt(localStorage.getItem('proveedorId'));
+// Cargar proveedores en el select
+async function cargarProveedoresSeleccionados(selectedId = null) {
+  const select = document.getElementById("tool-provider");
+  select.innerHTML = "";
+  try {
+    const token = localStorage.getItem('token');
+    const res = await fetch("http://localhost:8080/api/proveedor/findAll", {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    });
+    if (!res.ok) throw new Error("No se pudieron cargar los proveedores");
+    const proveedores = await res.json();
+    proveedores.forEach(prov => {
+      const option = document.createElement("option");
+      option.value = prov.id;
+      option.textContent = prov.empresa || prov.nombre || `Proveedor ${prov.id}`;
+      if (selectedId && prov.id == selectedId) {
+        option.selected = true;
+      }
+      select.appendChild(option);
+    });
+    if (proveedores.length === 0) {
+      select.innerHTML = `<option value="">Sin proveedores</option>`;
+    }
+  } catch (error) {
+    select.innerHTML = `<option value="">Sin proveedores</option>`;
+    console.error(error);
+  }
 }
 
 // Mostrar/ocultar modal
@@ -26,16 +53,14 @@ function closeModal() {
   toolForm.reset();
   editToolId = null;
   document.getElementById("tool-id").value = '';
-  document.getElementById("tool-provider").value = getProveedorIdLogueado();
 }
 
-// Cargar herramientas en la tabla (solo las del proveedor logueado)
+// Cargar herramientas en la tabla (todas)
 async function cargarHerramientas() {
   if (!toolsTableBody) return;
   toolsTableBody.innerHTML = `<tr><td colspan="8">Cargando herramientas...</td></tr>`;
   try {
     const token = localStorage.getItem('token');
-    const proveedorId = getProveedorIdLogueado();
     if (!token) {
       toolsTableBody.innerHTML = `<tr><td colspan="8">No autorizado. Inicia sesión.</td></tr>`;
       return;
@@ -56,15 +81,12 @@ async function cargarHerramientas() {
     if (!res.ok) throw new Error("Error al obtener herramientas");
     const herramientas = await res.json();
 
-    // Filtra solo las herramientas del proveedor logueado
-    const herramientasPropias = herramientas.filter(tool => tool.proveedorHerramienta == proveedorId);
-
-    if (!Array.isArray(herramientasPropias) || herramientasPropias.length === 0) {
-      toolsTableBody.innerHTML = `<tr><td colspan="8">No tienes herramientas registradas.</td></tr>`;
+    if (!Array.isArray(herramientas) || herramientas.length === 0) {
+      toolsTableBody.innerHTML = `<tr><td colspan="8">No hay herramientas registradas.</td></tr>`;
       return;
     }
 
-    toolsTableBody.innerHTML = herramientasPropias
+    toolsTableBody.innerHTML = herramientas
       .map(
         (tool) => `
         <tr>
@@ -128,13 +150,15 @@ async function cargarHerramientaEnModal(id) {
     if (!res.ok) throw new Error("No se pudo cargar la herramienta");
     const tool = await res.json();
 
+    await cargarProveedoresSeleccionados(tool.proveedorHerramienta);
+
     document.getElementById("tool-id").value = tool.id || '';
     document.getElementById("tool-name").value = tool.nombre || '';
     document.getElementById("tool-description").value = tool.descripcion || '';
     document.getElementById("tool-price").value = tool.price != null ? tool.price : '';
     document.getElementById("tool-stock").value = tool.stock != null ? tool.stock : '';
     document.getElementById("tool-status").value = tool.estadoHerramienta || '';
-    document.getElementById("tool-provider").value = getProveedorIdLogueado();
+    document.getElementById("tool-provider").value = tool.proveedorHerramienta || '';
 
     editToolId = id;
     openModal("Editar herramienta");
@@ -174,8 +198,7 @@ toolForm.addEventListener('submit', async (e) => {
   const price = parseFloat(document.getElementById("tool-price").value) || 0;
   const stock = parseInt(document.getElementById("tool-stock").value) || 0;
   const estadoHerramienta = parseInt(document.getElementById("tool-status").value);
-  const proveedorHerramienta = getProveedorIdLogueado();
-  document.getElementById("tool-provider").value = proveedorHerramienta; // Asegura que el campo oculto esté lleno
+  const proveedorHerramienta = parseInt(document.getElementById("tool-provider").value);
   const imagenInput = document.getElementById("tool-image");
   let imagen = "";
   if (imagenInput.files && imagenInput.files[0]) {
@@ -231,11 +254,11 @@ toolForm.addEventListener('submit', async (e) => {
 });
 
 // Abrir modal para agregar
-btnAddTool.addEventListener('click', () => {
+btnAddTool.addEventListener('click', async () => {
   toolForm.reset();
   document.getElementById("tool-id").value = '';
   editToolId = null;
-  document.getElementById("tool-provider").value = getProveedorIdLogueado();
+  await cargarProveedoresSeleccionados();
   openModal("Agregar herramienta");
 });
 

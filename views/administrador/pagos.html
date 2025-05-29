@@ -17,16 +17,14 @@
       <h2>Registrar Pago</h2>
       <form id="pagoForm">
         <input type="hidden" id="editMode" value="false" />
-        <input type="text" id="cliente" placeholder="Nombre del Cliente" required />
+        <input type="number" id="reserva" placeholder="ID de Reserva" required />
+        <input type="number" id="metodo" placeholder="ID Método de Pago" required />
+        <input type="number" id="estado" placeholder="ID Estado de Pago" required />
         <input type="number" id="monto" placeholder="Monto ($)" required />
         <input type="date" id="fecha" required />
-        <select id="estado" required>
-          <option value="" disabled selected>Seleccione Estado</option>
-          <option value="Pagado">Pagado</option>
-          <option value="Pendiente">Pendiente</option>
-        </select>
         <button type="submit">Guardar</button>
       </form>
+
     </section>
 
     <section class="tabla-section">
